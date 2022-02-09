@@ -12,3 +12,4 @@ and in some cases:
 
 - DFreds Convenient Effects
 - Dynamic Active Effects
+- Monk's Token Bar
