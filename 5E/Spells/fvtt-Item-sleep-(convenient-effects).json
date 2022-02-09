@@ -1,0 +1,156 @@
+{
+  "name": "Sleep (Convenient Effects)",
+  "type": "spell",
+  "img": "modules/plutonium/media/icon/spell/phb-sleep.webp",
+  "data": {
+    "description": {
+      "value": "<div class=\"rd__b  rd__b--3\"><p>This spell sends creatures into a magical slumber. Roll [[/r 5d8]]; the total is how many hit points of creatures this spell can affect. Creatures within 20 feet of a point you choose within range are affected in ascending order of their current hit points (ignoring @condition[unconscious] creatures).</p><div class=\"rd__spc-inline-post\"></div><p>Starting with the creature that has the lowest current hit points, each creature affected by this spell falls @condition[unconscious] until the spell ends, the sleeper takes damage, or someone uses an action to shake or slap the sleeper awake. Subtract each creature's hit points from the total before moving on to the creature with the next lowest hit points. A creature's hit points must be equal to or less than the remaining total for that creature to be affected.</p><p>Undead and creatures immune to being @condition[charmed] aren't affected by this spell.</p></div><div class=\"rd__b  rd__b--3\"><div class=\"rd__b  rd__b--3\"><span class=\"rd__h rd__h--3\" data-title-index=\"1\"> <span class=\"entry-title-inner\">At Higher Levels.</span></span> <p>When you cast this spell using a spell slot of 2nd level or higher, roll an additional [[/r 2d8]] for each slot level above 1st.</p><div class=\"rd__spc-inline-post\"></div></div><div class=\"rd__spc-inline-post\"></div></div>",
+      "chat": "",
+      "unidentified": ""
+    },
+    "source": "PHB",
+    "activation": {
+      "type": "action",
+      "cost": 1,
+      "condition": ""
+    },
+    "duration": {
+      "value": 1,
+      "units": "minute"
+    },
+    "target": {
+      "value": 20,
+      "width": null,
+      "units": "ft",
+      "type": "sphere"
+    },
+    "range": {
+      "value": 90,
+      "long": null,
+      "units": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": "0",
+      "per": ""
+    },
+    "consume": {
+      "type": "",
+      "target": "",
+      "amount": null
+    },
+    "ability": "",
+    "actionType": "util",
+    "attackBonus": null,
+    "chatFlavor": "",
+    "critical": {
+      "threshold": null,
+      "damage": ""
+    },
+    "damage": {
+      "parts": [
+        [
+          "5d8",
+          "midi-none"
+        ]
+      ],
+      "versatile": ""
+    },
+    "formula": "",
+    "save": {
+      "ability": "",
+      "dc": null,
+      "scaling": "spell"
+    },
+    "level": 1,
+    "school": "enc",
+    "components": {
+      "value": "",
+      "vocal": true,
+      "somatic": true,
+      "material": true,
+      "ritual": false,
+      "concentration": false
+    },
+    "materials": {
+      "value": "a pinch of fine sand, rose petals, or a cricket",
+      "consumed": false,
+      "cost": 0,
+      "supply": 0
+    },
+    "preparation": {
+      "mode": "prepared",
+      "prepared": true
+    },
+    "scaling": {
+      "mode": "level",
+      "formula": "2d8"
+    },
+    "attunement": null
+  },
+  "effects": [],
+  "flags": {
+    "srd5e": {
+      "page": "spells.html",
+      "source": "PHB",
+      "hash": "sleep_phb",
+      "propDroppable": "spell"
+    },
+    "spellTemplateManager": {
+      "stmData": {
+        "ignoreDuration": false,
+        "spellTexture": "",
+        "useTexture": false,
+        "alpha": 50,
+        "coneOrigin": 1,
+        "loopAnimations": true
+      }
+    },
+    "enhancedcombathud": {
+      "set1p": false,
+      "set2p": false,
+      "set3p": false
+    },
+    "enhanced-terrain-layer": {
+      "multiple": 1,
+      "min": 0,
+      "max": 0,
+      "environment": ""
+    },
+    "midi-qol": {
+      "onUseMacroName": "[postActiveEffects]ItemMacro",
+      "effectActivation": false
+    },
+    "itemacro": {
+      "macro": {
+        "data": {
+          "_id": null,
+          "name": "Sleep (Convenient Effects)",
+          "type": "script",
+          "author": "sGDyf0LH8KxxtfaW",
+          "img": "icons/svg/dice-target.svg",
+          "scope": "global",
+          "command": "//################################################################\n// based on Crymic macro for sleep\n// Midi-qol \"On Use\"\n// Uses Damage roll on item, set damage to \"no damage\"\n// Sasquach\n// Requires Dfres Convenient Effects\n// Checks Fey Ancestry & Charm Immunity\n//################################################################\nasync function wait(ms) {\n    return new Promise(resolve => {\n        setTimeout(resolve, ms);\n    });\n}\nconst sleepHp = await args[0].damageTotal;\nconst condition = \"Unconscious\";\nconsole.log(`Sleep Spell => Avaiable HP Pool [${sleepHp}] points`);\nlet targets = await args[0].targets.filter(i => i.actor.data.data.attributes.hp.value != 0 && !i.actor.effects.find(x => x.data.label === condition)).sort((a, b) => canvas.tokens.get(a.id).actor.data.data.attributes.hp.value < canvas.tokens.get(b.id).actor.data.data.attributes.hp.value ? -1 : 1);\nlet remainingSleepHp = sleepHp;\nlet slept_target = [];\n\nfor (let target of targets) {\n    let find_target = await canvas.tokens.get(target.id);\n    let find_targetUUID = await canvas.tokens.get(target.id).actor.uuid;\n    let immune_type = find_target.actor.data.type === \"character\" ? [\"undead\", \"construct\"].some(race => (find_target.actor.data.data.details.race || \"\").toLowerCase().includes(race)) : [\"undead\", \"construct\"].some(value => (find_target.actor.data.data.details.type.value || \"\").toLowerCase().includes(value));\n    let immune_ci = find_target.actor.data.data.traits.ci.custom.includes(\"Sleep\");\n    let sleeping = find_target.actor.effects.find(i => i.data.label === condition);\n    let isFey = find_target.actor.items.find(item => item.data.name.toLowerCase() == \"fey ancestry\");\n\n    let immunity = find_target.actor.data.data.traits.ci.value;\n    let immune_to_charm = 0;\n    for (let j = 0; j < immunity.length; j++) {\n        if (immunity[j] === \"charmed\") immune_to_charm = 1;\n    }\n\n    let targetHpValue = find_target.actor.data.data.attributes.hp.value;\n    if ((immune_type) || (immune_ci) || (sleeping) || (isFey) || (immune_to_charm)) {\n        console.log(`Sleep Results => Target: ${find_target.name} | HP: ${targetHpValue} | Status: Resists`);\n        slept_target.push(`<div class=\"midi-qol-flex-container\"><div>resists</div><div class=\"midi-qol-target-npc midi-qol-target-name\" id=\"${find_target.id}\"> ${find_target.name}</div><div><img src=\"${find_target.data.img}\" width=\"30\" height=\"30\" style=\"border:0px\"></div></div>`);\n        continue;\n    }\n    if (remainingSleepHp >= targetHpValue) {\n        remainingSleepHp -= targetHpValue;\n        console.log(`Sleep Results => Target: ${find_target.name} |  HP: ${targetHpValue} | HP Pool: ${remainingSleepHp} | Status: Slept`);\n        slept_target.push(`<div class=\"midi-qol-flex-container\"><div>slept</div><div class=\"midi-qol-target-npc midi-qol-target-name\" id=\"${find_target.id}\"> ${find_target.name}</div><div><img src=\"${find_target.data.img}\" width=\"30\" height=\"30\" style=\"border:0px\"></div></div>`);\n        let gameRound = game.combat ? game.combat.round : 0;\n\n        let effectLabel = \"Unconscious\";\n        await game.dfreds.effectInterface.toggleEffect(effectLabel, {\n            uuids: [find_targetUUID]\n        });\n        let effect = target.actor.effects.find(e => e.data.label === effectLabel);\n        await target.actor.updateEmbeddedDocuments(\"ActiveEffect\", [{\n            _id: effect.id,\n            disabled: effect.data.disabled,\n            duration: {\n                rounds: 10,\n                seconds: 60\n            }\n        }]);\n\n        effectLabel = \"Prone\";\n\n        await game.dfreds.effectInterface.toggleEffect(effectLabel, {\n            uuids: [find_targetUUID]\n        });\n        let effect2 = target.actor.effects.find(e => e.data.label === effectLabel);\n        await target.actor.updateEmbeddedDocuments(\"ActiveEffect\", [{\n            _id: effect2.id,\n            disabled: effect.data.disabled,\n            duration: {\n                rounds: 10,\n                seconds: 60\n            }\n        }]);\n\n\n        continue;\n    } else {\n        console.log(`Sleep Results => Target: ${target.name} | HP: ${targetHpValue} | HP Pool: ${remainingSleepHp - targetHpValue} | Status: Missed`);\n        slept_target.push(`<div class=\"midi-qol-flex-container\"><div>misses</div><div class=\"midi-qol-target-npc midi-qol-target-name\" id=\"${find_target.id}\"> ${find_target.name}</div><div><img src=\"${find_target.data.img}\" width=\"30\" height=\"30\" style=\"border:0px\"></div></div>`);\n        //break;\n    }\n}\nlet slept_list = slept_target.join('');\nawait wait(500);\nlet slept_results = `<div><div class=\"midi-qol-nobox\">${slept_list}</div></div>`;\nconst chatMessage = game.messages.get(args[0].itemCardId);\nlet content = duplicate(chatMessage.data.content);\nconst searchString = /<div class=\"midi-qol-hits-display\">[\\s\\S]*<div class=\"end-midi-qol-hits-display\">/g;\nconst replaceString = `<div class=\"midi-qol-hits-display\"><div class=\"end-midi-qol-hits-display\">${slept_results}`;\ncontent = await content.replace(searchString, replaceString);\nawait chatMessage.update({\n    content: content\n});",
+          "folder": null,
+          "sort": 0,
+          "permission": {
+            "default": 0
+          },
+          "flags": {}
+        }
+      }
+    },
+    "favtab": {
+      "isFavorite": true
+    },
+    "core": {
+      "sourceId": "Item.aNJCNjmZZHbyx0UK"
+    },
+    "exportSource": {
+      "world": "5etest",
+      "system": "dnd5e",
+      "coreVersion": "9.242",
+      "systemVersion": "1.5.7"
+    }
+  }
+}
