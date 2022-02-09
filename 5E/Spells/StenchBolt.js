@@ -1,4 +1,4 @@
-// Requires the following modules: Item Macros
+// Requires the following modules: Item Macros, Times-Up, About-Time, MidiQOL
 // Icon: https://game-icons.net/1x1/lorc/skull-bolt.html
 
 
