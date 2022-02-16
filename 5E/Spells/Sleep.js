@@ -1,4 +1,4 @@
-// Requires the following modules: Item Macros, Times-Up, About-Time, MidiQOL, DFreds Convenient Effects
+// Requires the following modules: Item Macros, Times-Up, About-Time, MidiQOL
 // Original script: https://gitlab.com/crymic/foundry-vtt-macros/-/blob/8.x/5e/Spells/Level%201/Sleep.js
 
 async function wait(ms) { return new Promise(resolve => { setTimeout(resolve, ms); }); }
