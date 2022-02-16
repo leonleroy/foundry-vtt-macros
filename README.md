@@ -16,4 +16,4 @@ and in some cases:
 
 
 Please enable MI
-![](https://gitlab.com/tposney/midi-qol/-/blob/master/GettingStartedPics/Concentration.png)
+[[https://gitlab.com/tposney/midi-qol/-/blob/master/GettingStartedPics/Concentration.png]]
