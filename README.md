@@ -3,7 +3,7 @@
 I am using the following FoundryVTT modules for my macros:
 
 - ItemMacro
-- Midi QOL
+- Midi QOL (concentration must be enabled)
 - Advanced Macros
 - Times-Up
 - About Time
