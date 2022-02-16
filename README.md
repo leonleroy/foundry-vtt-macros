@@ -15,5 +15,3 @@ and in some cases:
 - Monk's Token Bar
 
 
-Please enable MI
-[[https://gitlab.com/tposney/midi-qol/-/blob/master/GettingStartedPics/Concentration.png]]
