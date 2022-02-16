@@ -1,6 +1,8 @@
 // Requires the following modules: Item Macros, Times-Up, About-Time, MidiQOL, DFreds Convenient Effects
 // Original script: https://gitlab.com/crymic/foundry-vtt-macros/-/blob/8.x/5e/Spells/Level%201/Sleep.js
 
+if (!game.modules.get("dfreds-convenient-effects")?.active) {ui.notifications.error("Please enable the DFreds Convenient Effects module") ;return;}
+
 async function wait(ms) {
     return new Promise(resolve => {
         setTimeout(resolve, ms);
