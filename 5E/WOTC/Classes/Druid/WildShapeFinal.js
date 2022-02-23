@@ -1,4 +1,4 @@
-// Original script: https://gitlab.com/Freeze020/foundry-vtt-scripts/-/blob/master/DnD5e%20specific%20macros/Wildshape/WildShape-player.js
+// Original script: https://gitlab.com/Freeze020/foundry-vtt-scripts/-/blob/master/DnD5e%20specific%20macros/Wildshape/WildShape-player.js 
 // Special thanks to Freeze for the original macro
 // Thanks to Crymic and IanM32 for the support/ideas
 // Requires the following permissions: CREATE NEW ACTORS, CREATE NEW ITEMS
