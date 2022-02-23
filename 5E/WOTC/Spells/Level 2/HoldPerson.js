@@ -1,4 +1,4 @@
-// Requires the following modules: Item Macros, Times-Up, About-Time, MidiQOL
+// Requires the following modules: Item Macros, Times-Up, About-Time, MidiQOL 
 
 let NumberOfTargets = await args[0].targets.length;
 let spellLevel = await args[0].spellLevel;
