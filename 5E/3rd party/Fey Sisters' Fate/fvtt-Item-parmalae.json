@@ -1,0 +1,221 @@
+{
+  "name": "Parmalae",
+  "type": "weapon",
+  "img": "icons/weapons/swords/sword-guard-bronze.webp",
+  "data": {
+    "description": {
+      "value": "<p><em>This thin, delicate blade is gilded in pure silver. When swung, glowing blue runes appear on the flat of the blade. The basket hilt is fashioned from sturdy electrum in the fanciful design of ivy leaves.</em></p>\n<p>Deals piercing damage equal to 1d8 + your Strength or Dexterity modifier.</p>\n<p><strong>Finesse. </strong>When making an attack with a finesse weapon, you use your choice of your Strength or Dexterity modifier for the attack and damage rolls. You must use the same modifier for both rolls.</p>\n<section class=\"secret\">\n<p>+1 to hit and +1 to damage, magical and silver weapon</p>\n<p> </p>\n<p>Once per day on a successful hit, the target is imbued with a glittery fey lining. This glowing aura grants advantage on ranged attacks and lasts for one minute.</p>\n</section>",
+      "chat": "",
+      "unidentified": ""
+    },
+    "source": "Fey Sisters' Fate",
+    "quantity": 1,
+    "weight": 2,
+    "price": "25",
+    "attunement": 0,
+    "equipped": true,
+    "rarity": "uncommon",
+    "identified": false,
+    "activation": {
+      "type": "action",
+      "cost": 1,
+      "condition": ""
+    },
+    "duration": {
+      "value": null,
+      "units": ""
+    },
+    "target": {
+      "value": null,
+      "width": null,
+      "units": "",
+      "type": ""
+    },
+    "range": {
+      "value": 5,
+      "long": null,
+      "units": "ft"
+    },
+    "uses": {
+      "value": 0,
+      "max": "0",
+      "per": ""
+    },
+    "consume": {
+      "type": "",
+      "target": "",
+      "amount": null
+    },
+    "ability": "",
+    "actionType": "mwak",
+    "attackBonus": "1",
+    "chatFlavor": "",
+    "critical": {
+      "threshold": null,
+      "damage": ""
+    },
+    "damage": {
+      "parts": [
+        [
+          "1d8 + @mod +1",
+          "piercing"
+        ]
+      ],
+      "versatile": ""
+    },
+    "formula": "",
+    "save": {
+      "ability": "",
+      "dc": null,
+      "scaling": "spell"
+    },
+    "armor": {
+      "value": 10
+    },
+    "hp": {
+      "value": 0,
+      "max": 0,
+      "dt": null,
+      "conditions": ""
+    },
+    "weaponType": "martialM",
+    "baseItem": "",
+    "properties": {
+      "fin": true,
+      "ada": false,
+      "amm": false,
+      "fir": false,
+      "foc": false,
+      "hvy": false,
+      "lgt": false,
+      "lod": false,
+      "mgc": true,
+      "rch": false,
+      "rel": false,
+      "ret": false,
+      "sil": true,
+      "spc": false,
+      "thr": false,
+      "two": false,
+      "ver": false,
+      "nodam": false,
+      "fulldam": false,
+      "halfdam": false,
+      "critOther": false
+    },
+    "proficient": false
+  },
+  "effects": [],
+  "flags": {
+    "core": {
+      "sourceId": "Compendium.dnd5e.items.Tobce1hexTnDk4sV"
+    },
+    "midi-qol": {
+      "criticalThreshold": "20",
+      "onUseMacroName": "[postDamageRoll]ItemMacro",
+      "effectActivation": false
+    },
+    "magicitems": {
+      "enabled": false,
+      "equipped": false,
+      "attuned": false,
+      "charges": "0",
+      "chargeType": "c1",
+      "destroy": false,
+      "destroyFlavorText": "reaches 0 charges: it crumbles into ashes and is destroyed.",
+      "rechargeable": false,
+      "recharge": "0",
+      "rechargeType": "t1",
+      "rechargeUnit": "r1",
+      "sorting": "l"
+    },
+    "favtab": {
+      "isFavorite": false
+    },
+    "siftoolkit": {
+      "SIFData": {
+        "ignoreDuration": false,
+        "texture": "",
+        "useTexture": false,
+        "alpha": 50,
+        "coneOrigin": 1,
+        "loopAnimations": true,
+        "playTemplateAudio": false,
+        "playDamageAudio": false,
+        "playSaveAudio": false,
+        "clip": "",
+        "volume": 100
+      }
+    },
+    "autoanimations": {
+      "killAnim": false,
+      "below": false,
+      "override": true,
+      "targetToken": {
+        "enable": false
+      },
+      "sourceToken": {
+        "enable": false
+      },
+      "allSounds": {
+        "item": {
+          "enableAudio": false
+        }
+      },
+      "autoOverride": {
+        "enable": false
+      },
+      "version": 1,
+      "animation": "1hp",
+      "animType": "melee",
+      "color": "white",
+      "meleeSwitch": {
+        "switchType": "on"
+      },
+      "explosions": {
+        "enable": false
+      },
+      "options": {
+        "meleeType": "generic",
+        "variant": "01",
+        "repeat": 1,
+        "delay": 250,
+        "scale": 1,
+        "enableCustom": false,
+        "customPath": "",
+        "ammo": false
+      },
+      "animLevel": false
+    },
+    "cf": {
+      "id": "temp_oaeydynx6b",
+      "path": "Revised Weapons#/CF_SEP/Martial Melee Weapons",
+      "color": "#ff6f00"
+    },
+    "itemacro": {
+      "macro": {
+        "data": {
+          "_id": null,
+          "name": "Parmalae",
+          "type": "script",
+          "author": "sGDyf0LH8KxxtfaW",
+          "img": "icons/svg/dice-target.svg",
+          "scope": "global",
+          "command": "// Requires the following modules: Item Macros, Times-Up, About-Time, MidiQOL\n// Macro version 1.0  // 20220218\n\nasync function prompttrigger() {\n\n    return await new Promise((resolve) => {\n        let dialogEditor = new Dialog({\n            title: `Apply weapon special ability?`,\n            content: '',\n            buttons: {\n                hit: {\n                    label: `Yes!`,\n                    callback: () => {\n                        resolve(true);\n                    }\n                },\n                miss: {\n                    label: `No!`,\n                    callback: () => {\n                        resolve(false);\n                    },\n                },\n                //default: () => {resolve(false)}\n            }\n        });\n\n        dialogEditor.render(true);\n    });\n}\n\n\n\nif (args[0].tag === \"OnUse\") {\n    if (actor.items.find(item => item.data.name.toLowerCase() == \"fey ancestry\")) {\n        let LastUsedTime = await item.getFlag(\"world\", \"ParmalaeLastUsed\");\n        let CurrTime = Math.floor(game.time.worldTime / 86400);\n\n        if ((LastUsedTime === undefined) || (CurrTime > LastUsedTime)) {\n            let use = await prompttrigger();\n\n\n            if (use) {\n                let Effect = {\n                    label: item.name,\n                    origin: item.uuid,\n                    icon: item.data.img,\n                    changes: [{\n                            key: \"flags.midi-qol.grants.advantage.attack.all\",\n                            mode: 0,\n                            value: 1,\n                            priority: 20\n                        },\n                    ],\n                    \"duration\": {\n                        \"rounds\": 10,\n                        \"seconds\": 60,\n                        \"startTime\": game.time.worldTime\n                    },\n\n                };\n                await args[0].targets[0].actor.createEmbeddedDocuments(\"ActiveEffect\", [Effect]);\n                await item.setFlag(\"world\", \"ParmalaeLastUsed\", game.time.worldTime / 86400);\n            }\n        }\n    }\n}",
+          "folder": null,
+          "sort": 0,
+          "permission": {
+            "default": 0
+          },
+          "flags": {}
+        }
+      }
+    },
+    "exportSource": {
+      "world": "5etest",
+      "system": "dnd5e",
+      "coreVersion": "9.249",
+      "systemVersion": "1.5.7"
+    }
+  }
+}

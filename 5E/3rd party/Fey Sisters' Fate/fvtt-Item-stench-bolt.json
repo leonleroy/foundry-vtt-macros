@@ -1,0 +1,143 @@
+{
+  "name": "Stench Bolt",
+  "type": "spell",
+  "img": "MyIcons/skull-bolt_tb.svg",
+  "data": {
+    "description": {
+      "value": "<p>Make a ranged spell attack against the target creature. On a hit, the target emits a foul organic stench. The target and all creatures within 10 feet make all attack, ability checks and saving throws at disadvantage due to the nauseating effect of the stench. If the attack misses, the bolt targets a nearby unoccupied square. All creatures within 10 feet of that square make all attacks, ability checks and saving throws at disadvantage. However, creatures are able to move away from the offending stench on their next turn.</p>\n<p>You can target one additional creature at <span style=\"font-family:var(--font-primary);font-size:var(--font-size-14)\"> 5th level </span><span style=\"font-family:var(--font-primary);font-size:var(--font-size-14)\">[[/r 2d8]]</span><span style=\"font-family:var(--font-primary);font-size:var(--font-size-14)\">, 11th level </span><span style=\"font-family:var(--font-primary);font-size:var(--font-size-14)\">[[/r 3d8]]</span><span style=\"font-family:var(--font-primary);font-size:var(--font-size-14)\">, and 17th level </span><span style=\"font-family:var(--font-primary);font-size:var(--font-size-14)\">[[/r 4d8]]</span><span style=\"font-family:var(--font-primary);font-size:var(--font-size-14)\">. </span></p>",
+      "chat": "",
+      "unidentified": ""
+    },
+    "source": "Fey Sisters' Fate",
+    "activation": {
+      "type": "action",
+      "cost": 1,
+      "condition": ""
+    },
+    "duration": {
+      "value": null,
+      "units": "inst"
+    },
+    "target": {
+      "value": 1,
+      "width": null,
+      "units": "",
+      "type": "creature"
+    },
+    "range": {
+      "value": 30,
+      "long": null,
+      "units": "ft"
+    },
+    "uses": {
+      "value": null,
+      "max": "",
+      "per": ""
+    },
+    "consume": {
+      "type": "",
+      "target": "",
+      "amount": null
+    },
+    "ability": "",
+    "actionType": "rsak",
+    "attackBonus": "0",
+    "chatFlavor": "",
+    "critical": {
+      "threshold": null,
+      "damage": ""
+    },
+    "damage": {
+      "parts": [],
+      "versatile": ""
+    },
+    "formula": "",
+    "save": {
+      "ability": "",
+      "dc": null,
+      "scaling": "spell"
+    },
+    "level": 0,
+    "school": "con",
+    "components": {
+      "value": "",
+      "vocal": true,
+      "somatic": true,
+      "material": true,
+      "ritual": false,
+      "concentration": false
+    },
+    "materials": {
+      "value": "(a bit of smelly mud, or a stench  cabbage leaf",
+      "consumed": false,
+      "cost": 0,
+      "supply": 0
+    },
+    "preparation": {
+      "mode": "prepared",
+      "prepared": true
+    },
+    "scaling": {
+      "mode": "cantrip",
+      "formula": "(floor((@details.level+1)/6)+1)d8"
+    },
+    "attunement": 0
+  },
+  "effects": [],
+  "flags": {
+    "spellTemplateManager": {
+      "stmData": {
+        "ignoreDuration": false,
+        "spellTexture": "",
+        "useTexture": false,
+        "alpha": 50,
+        "coneOrigin": 1,
+        "loopAnimations": true
+      }
+    },
+    "enhanced-terrain-layer": {
+      "multiple": 1,
+      "min": null,
+      "max": null,
+      "environment": "",
+      "elevation": null,
+      "depth": null
+    },
+    "midi-qol": {
+      "criticalThreshold": "20",
+      "effectActivation": false,
+      "onUseMacroName": "[postActiveEffects]ItemMacro"
+    },
+    "core": {
+      "sourceId": "Item.VPRfj3Q9ebH9S9yt"
+    },
+    "itemacro": {
+      "macro": {
+        "data": {
+          "_id": null,
+          "name": "Stench Bolt",
+          "type": "script",
+          "author": "sGDyf0LH8KxxtfaW",
+          "img": "icons/svg/dice-target.svg",
+          "scope": "global",
+          "command": "if (args[0].hitTargets.length > 0) {\n    let targets = Array.from(game.user.targets)\n    let tokenid = targets[0]\n    let [range] = await canvas.scene.createEmbeddedDocuments(\"MeasuredTemplate\", [{\n        t: \"circle\",\n        user: game.userId,\n        x: tokenid._validPosition.x + canvas.grid.size / 2,\n        y: tokenid._validPosition.y + canvas.grid.size / 2,\n        direction: 0,\n        distance: 10,\n        borderColor: \"#436643\",\n        fillColor: \"#436643\"\n    }]);\n\tawait addeffect();\n}\nelse\n{\n      let templateData = {\n      t: \"circle\",\n      user: game.userId,\n      distance: 10,\n      direction: 0,\n      x: 0,\n      y: 0,\n      borderColor: \"#436643\",\n      fillColor: \"#436643\"\n     };\n\t \n\tHooks.once(\"createMeasuredTemplate\", addeffect);\n\n    let doc = new CONFIG.MeasuredTemplate.documentClass(templateData, { parent: canvas.scene });\n    let template = new game.dnd5e.canvas.AbilityTemplate(doc);\n    await template.drawPreview();\n}\n\t\nfunction addeffect()\n{\n    let newtargets = Array.from(game.user.targets)\n    for (let target of newtargets) {\n        let find_target =  canvas.tokens.get(target.id);\n        let Effect = {\n            label: item.name,\n            origin: item.uuid,\n            icon: item.data.img,\n            duration: {\n                \"seconds\": 600,\n                startTime: game.time.worldTime\n            },\n            changes: [{\n                    key: `flags.midi-qol.disadvantage.attack.all`,\n                    mode: 2,\n                    value: 1,\n                    priority: 20\n                },\n                {\n                    key: `flags.midi-qol.disadvantage.ability.save.all`,\n                    mode: 2,\n                    value: 1,\n                    priority: 20\n                },\n                {\n                    key: `flags.midi-qol.disadvantage.ability.check.all`,\n                    mode: 2,\n                    value: 1,\n                    priority: 20\n                }\n            ]\n        }\n\n         find_target.actor.createEmbeddedDocuments(\"ActiveEffect\", [Effect]);\n\n    }\n}",
+          "folder": null,
+          "sort": 0,
+          "permission": {
+            "default": 0
+          },
+          "flags": {}
+        }
+      }
+    },
+    "favtab": {
+      "isFavorite": true
+    },
+    "exportSource": {
+      "world": "5etest",
+      "system": "dnd5e",
+      "coreVersion": "9.249",
+      "systemVersion": "1.5.7"
+    }
+  }
+}
