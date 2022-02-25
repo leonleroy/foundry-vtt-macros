@@ -29,4 +29,5 @@ All of them are ItemMacros
 - Hold Person: Ignores non-humanoid NPCs. Requests saves until succeed. Automaticly expires at the end of spell duration.
 - Sleep: Ignores undeads, constructs everyone with Fey ancestry or "Sleep" immunity, already asleep.
 - Sleep CE: Same as Sleep but using Dfred's Convenient Effects
+- Spiritual Weapon: Fully automated, creates an actor and add it to the combatants with the same inititative as the caster has. Automaticly expires at the end of spell duration. 
 - WildShape: Fully automated Wildshape macro, creates "Reverse Wildshape" feat. after casting. Automatically expires at the end of spell duration. 
