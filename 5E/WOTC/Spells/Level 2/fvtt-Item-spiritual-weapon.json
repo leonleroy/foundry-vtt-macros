@@ -1,0 +1,133 @@
+{
+  "name": "Spiritual Weapon",
+  "type": "spell",
+  "img": "systems/dnd5e/icons/spells/enchant-magenta-2.jpg",
+  "data": {
+    "description": {
+      "value": "<div class=\"rd__b  rd__b--3\"><p>You create a floating, spectral weapon within range that lasts for the duration or until you cast this spell again. When you cast the spell, you can make a melee spell attack against a creature within 5 feet of the weapon. On a hit, the target takes force damage equal to [[/r 1d8]] + your spellcasting ability modifier.</p><div class=\"rd__spc-inline-post\"></div><p>As a bonus action on your turn, you can move the weapon up to 20 feet and repeat the attack against a creature within 5 feet of it.</p><p>The weapon can take whatever form you choose. Clerics of deities who are associated with a particular weapon (as St. Cuthbert is known for his mace and Thor for his hammer) make this spell's effect resemble that weapon.</p></div><div class=\"rd__b  rd__b--3\"><div class=\"rd__b  rd__b--3\"><span class=\"rd__h rd__h--3\" data-title-index=\"1\"> <span class=\"entry-title-inner\">At Higher Levels.</span></span> <p>When you cast this spell using a spell slot of 3rd level or higher, the damage increases by [[/r 1d8]] for every two slot levels above 2nd.</p><div class=\"rd__spc-inline-post\"></div></div><div class=\"rd__spc-inline-post\"></div></div>",
+      "chat": "",
+      "unidentified": ""
+    },
+    "source": "PHB pg. 278",
+    "activation": {
+      "type": "bonus",
+      "cost": 1,
+      "condition": ""
+    },
+    "duration": {
+      "value": 1,
+      "units": "minute"
+    },
+    "target": {
+      "value": null,
+      "width": null,
+      "units": "",
+      "type": "self"
+    },
+    "range": {
+      "value": 60,
+      "long": null,
+      "units": "ft"
+    },
+    "uses": {
+      "value": 0,
+      "max": "0",
+      "per": ""
+    },
+    "consume": {
+      "type": "",
+      "target": "",
+      "amount": null
+    },
+    "ability": "",
+    "actionType": "other",
+    "attackBonus": "",
+    "chatFlavor": "",
+    "critical": {
+      "threshold": null,
+      "damage": ""
+    },
+    "damage": {
+      "parts": [],
+      "versatile": ""
+    },
+    "formula": "",
+    "save": {
+      "ability": "",
+      "dc": null,
+      "scaling": "spell"
+    },
+    "level": 2,
+    "school": "evo",
+    "components": {
+      "value": "",
+      "vocal": true,
+      "somatic": true,
+      "material": false,
+      "ritual": false,
+      "concentration": false
+    },
+    "materials": {
+      "value": "",
+      "consumed": false,
+      "cost": 0,
+      "supply": 0
+    },
+    "preparation": {
+      "mode": "prepared",
+      "prepared": true
+    },
+    "scaling": {
+      "mode": "none",
+      "formula": ""
+    }
+  },
+  "effects": [],
+  "flags": {
+    "srd5e": {
+      "page": "spells.html",
+      "source": "PHB",
+      "hash": "spiritual%20weapon_phb",
+      "propDroppable": "spell"
+    },
+    "midi-qol": {
+      "effectActivation": false,
+      "forceCEOff": true,
+      "onUseMacroName": "[preActiveEffects]ItemMacro"
+    },
+    "enhanced-terrain-layer": {
+      "multiple": null,
+      "elevation": null,
+      "depth": null,
+      "environment": ""
+    },
+    "itemacro": {
+      "macro": {
+        "data": {
+          "_id": null,
+          "name": "Spiritual Weapon",
+          "type": "script",
+          "author": "sGDyf0LH8KxxtfaW",
+          "img": "icons/svg/dice-target.svg",
+          "scope": "global",
+          "command": "// Requires the following modules: Item Macros, Times-Up, About-Time\n// Macro version 1.0 // 20220225\n\nif (args[0] === \"off\") {\n    let ztoken = await fromUuid(args[args.length - 1].actorUuid);\n    let charID = await ztoken.actor.getFlag(\"world\", \"SpiritualWeapon.ActorId\");\n    ztoken.actor.unsetFlag(\"world\", \"SpiritualWeapon\");\n    let ztokenSPW = canvas.tokens.placeables.find(akarmi => akarmi.data.actorId == charID)\n    if (game.combat) {\n        let SWP = game.combat.data.combatants.find(e => e.data.actorId == charID);\n        if (SWP) game.combat.deleteEmbeddedDocuments(\"Combatant\", [SWP.data._id]);\n    }\n    ztokenSPW.document.delete();\n    game.actors.get(charID).delete();\n}\n\nif (args[0].tag === \"OnUse\") {\n    let numDice = args[0].spellLevel % 2 ? 1 + Math.floor((args[0].spellLevel) / 2) : Math.floor((args[0].spellLevel) / 2);\n\n    let spellAbil = actor.data.data.attributes.spellcasting;\n    let abilBonus = getProperty(actor, `data.data.abilities.${spellAbil}.mod`);\n\n    let tid;\n\n    let swordimg = \"icons/weapons/swords/sword-guard-flanged-purple.webp\";\n    let maceimg = \"icons/weapons/maces/mace-round-spiked-black.webp\";\n    let spearimg = \"icons/weapons/ammunition/arrow-head-war-flight.webp\";\n    let hammerimg = \"icons/weapons/hammers/hammer-drilling-spiked.webp\";\n    let axeimg = \"icons/weapons/polearms/halberd-crescent-engraved-steel.webp\";\n    let wpimg;\n\n    function getCenterGrid(point = {}) {\n        const arr = canvas.grid.getCenter(point.x, point.y);\n        return {\n            x: arr[0],\n            y: arr[1]\n        };\n    }\n\n    function getMousePosition() {\n        const mouse = canvas.app.renderer.plugins.interaction.mouse;\n        return mouse.getLocalPosition(canvas.app.stage);\n    }\n\n\n    async function weaponselect() {\n\n        return await new Promise((resolve) => {\n            let dialogEditor = new Dialog({\n                title: `Choose Weapon`,\n                content: '',\n                buttons: {\n                    Sword: {\n                        label: `<img src=\"${swordimg}\" width=\"60\" height=\"60\" style=\"border:0px\"><br>Sword`,\n                        callback: () => {\n                            resolve(1);\n                        }\n                    },\n                    Mace: {\n                        label: `<img src=\"${maceimg}\" width=\"60\" height=\"60\" style=\"border:0px\"><br>Mace`,\n                        callback: () => {\n                            resolve(2);\n                        },\n                    },\n                    Spear: {\n                        label: `<img src=\"${spearimg}\" width=\"60\" height=\"60\" style=\"border:0px\"><br>Spear`,\n                        callback: () => {\n                            resolve(3);\n                        },\n                    },\n                    Hammer: {\n                        label: `<img src=\"${hammerimg}\" width=\"60\" height=\"60\" style=\"border:0px\"><br>Hammer`,\n                        callback: () => {\n                            resolve(4);\n                        },\n                    },\n                    default: {\n                        label: `<img src=\"${axeimg}\" width=\"60\" height=\"60\" style=\"border:0px\"><br>Axe`,\n                        callback: () => {\n                            resolve(5);\n                        },\n                    }\n                }\n            });\n            dialogEditor.render(true);\n        });\n    }\n\n    let weapon = await weaponselect();\n\n    switch (weapon) {\n        case 1:\n            wpimg = swordimg;\n            break;\n        case 2:\n            wpimg = maceimg;\n            break;\n        case 3:\n            wpimg = spearimg;\n            break;\n        case 4:\n            wpimg = hammerimg;\n            break;\n        case 5:\n            wpimg = axeimg;\n            break;\n        default:\n            wpimg = swordimg;\n            break;\n    }\n\n    let user = game.users.get(game.userId);\n\n    let itemdata = [{\n        \"name\": \"Attack\",\n        \"type\": \"weapon\",\n        \"img\": wpimg,\n        \"data\": {\n            \"description\": {\n                \"value\": \"<p>A floating, spectral weapon within range that lasts for the duration or until you cast this spell again.</p>\\n<p>On a hit, the target takes force damage equal to 1d8 + your spellcasting ability modifier.</p>\\n<p>As a bonus action on your turn, you can move the weapon up to 20 feet and repeat the attack against a creature within 5 feet of it.</p>\\n<p>The weapon can take whatever form you choose. Clerics of deities who are associated with a particular weapon (as St. Cuthbert is known for his mace and Thor for his hammer) make this spell&rsquo;s effect resemble that weapon.</p>\",\n                \"chat\": \"\",\n                \"unidentified\": \"\"\n            },\n            \"source\": \"PHB pg. 278\",\n            \"quantity\": 1,\n            \"weight\": 0,\n            \"price\": \"0\",\n            \"attunement\": 0,\n            \"equipped\": true,\n            \"rarity\": \"common\",\n            \"identified\": true,\n            \"activation\": {\n                \"type\": \"bonus\",\n                \"cost\": 0,\n                \"condition\": \"\"\n            },\n            \"duration\": {\n                \"value\": null,\n                \"units\": \"\"\n            },\n            \"target\": {\n                \"value\": 1,\n                \"width\": null,\n                \"units\": \"\",\n                \"type\": \"creature\"\n            },\n            \"range\": {\n                \"value\": 60,\n                \"long\": null,\n                \"units\": \"ft\"\n            },\n            \"uses\": {\n                \"value\": null,\n                \"max\": \"\",\n                \"per\": \"\"\n            },\n            \"consume\": {\n                \"type\": \"\",\n                \"target\": \"\",\n                \"amount\": null\n            },\n            \"ability\": \"wis\",\n            \"actionType\": \"msak\",\n            \"attackBonus\": abilBonus,\n            \"chatFlavor\": \"\",\n            \"critical\": {\n                \"threshold\": null,\n                \"damage\": \"\"\n            },\n            \"damage\": {\n                \"parts\": [\n                    [\n                        `${numDice}d8+${abilBonus}`,\n                        \"force\"\n                    ]\n                ],\n                \"versatile\": \"\"\n            },\n            \"formula\": \"\",\n            \"save\": {\n                \"ability\": \"\",\n                \"dc\": null,\n                \"scaling\": \"spell\"\n            },\n            \"armor\": {\n                \"value\": 10\n            },\n            \"hp\": {\n                \"value\": 0,\n                \"max\": 0,\n                \"dt\": null,\n                \"conditions\": \"\"\n            },\n            \"weaponType\": \"simpleM\",\n            \"baseItem\": \"\",\n            \"properties\": {\n                \"ada\": false,\n                \"amm\": false,\n                \"fin\": false,\n                \"fir\": false,\n                \"foc\": false,\n                \"hvy\": false,\n                \"lgt\": false,\n                \"lod\": false,\n                \"mgc\": false,\n                \"rch\": false,\n                \"rel\": false,\n                \"ret\": false,\n                \"sil\": false,\n                \"spc\": false,\n                \"thr\": false,\n                \"two\": false,\n                \"ver\": false,\n                \"nodam\": false,\n                \"fulldam\": false,\n                \"halfdam\": false,\n                \"critOther\": false\n            },\n            \"proficient\": false\n        },\n    }];\n\n    const data = {\n        name: \"Spiritual Weapon of \" + actor.data.name,\n        type: \"character\",\n        \"img\": wpimg,\n        permission: {\n            [user.id]: 3\n        },\n        data: {\n            \"attributes\": {\n\n                \"ac\": {\n                    \"flat\": 90,\n                    \"calc\": \"flat\",\n                    \"formula\": \"\",\n                    \"base\": 50\n                },\n\n\n                \"hp\": {\n                    \"value\": 900,\n                    \"min\": 0,\n                    \"max\": 900\n                },\n                \"movement\": {\n                    \"fly\": 20,\n                    \"units\": \"ft\",\n                    \"hover\": false\n                }\n            },\n            \"traits\": {\n                \"di\": {\n                    \"value\": [\n                        \"acid\",\n                        \"bludgeoning\",\n                        \"cold\",\n                        \"fire\",\n                        \"force\",\n                        \"lightning\",\n                        \"necrotic\",\n                        \"physical\",\n                        \"piercing\",\n                        \"poison\",\n                        \"psychic\",\n                        \"radiant\",\n                        \"slashing\",\n                        \"thunder\",\n                        \"silver\",\n                        \"adamant\",\n                        \"spell\",\n                        \"healing\",\n                        \"temphp\"\n                    ],\n                }\n            },\n            \"details\": {\n                \"alignment\": \"\",\n                \"race\": \"Spiritual\",\n                \"background\": \"\",\n            },\n        }\n    };\n\n    let charID = (await Actor.create(data))?.id\n    await user.update({\n        character: charID\n    });\n\n    let [range] = await canvas.scene.createEmbeddedDocuments(\"MeasuredTemplate\", [{\n        t: \"circle\",\n        user: game.userId,\n        x: actor.parent.data.x + canvas.grid.size / 2,\n        y: actor.parent.data.y + canvas.grid.size / 2,\n        direction: 0,\n        distance: 60,\n        borderColor: \"#FF0000\"\n    }]);\n\n    tid = range.data._id;\n\n    let templateData = {\n        t: \"circle\",\n        user: game.userId,\n        distance: 2.5,\n        direction: 0,\n        x: 0,\n        y: 0,\n        fillColor: game.user.color,\n        flags: {\n            Temporary: true\n        }\n    }\n\n    let doc = new CONFIG.MeasuredTemplate.documentClass(templateData, {\n        parent: canvas.scene\n    });\n\n    let template = new game.dnd5e.canvas.AbilityTemplate(doc);\n    await template.drawPreview();\n    Hooks.once(\"createMeasuredTemplate\", deleteTemplates);\n\n    async function deleteTemplates() {\n        await canvas.scene.deleteEmbeddedDocuments(\"MeasuredTemplate\", [tid]);\n        let location = getCenterGrid(getMousePosition());\n        let tokenData = await game.actors.get(charID).getTokenData();\n        let swpactor = await game.actors.get(charID)\n        let tokendocu = await canvas.scene.createEmbeddedDocuments(\"Token\", [tokenData], {\n            temporary: true\n        });\n        tokendocu = duplicate(tokendocu[0]);\n        let {\n            x,\n            y\n        } = canvas.grid.getSnappedPosition(location.x, location.y, -1);\n        tokendocu.x = x;\n        tokendocu.y = y;\n        tokendocu.actorId = charID;\n        await canvas.scene.createEmbeddedDocuments(\"Token\", [tokendocu]);\n        await actor.setFlag(\"world\", \"SpiritualWeapon.ActorId\", charID);\n        await swpactor.createEmbeddedDocuments(\"Item\", itemdata);\n\n        let temporarytemplate = canvas.scene.data.templates.find(e => e.data.flags.Temporary == true);\n        if (temporarytemplate) temporarytemplate.delete();\n\n\n        let applySPWEffect = {\n            changes: [{\n                key: \"macro.itemMacro\",\n                mode: 0,\n                value: `ItemMacro.${item.name}`,\n                priority: 20\n            }],\n            label: item.name,\n            origin: item.uuid,\n            icon: item.data.img,\n            duration: {\n                \"seconds\": 60,\n                \"rounds\": 10,\n                startTime: game.time.worldTime\n            },\n        }\n        await actor.createEmbeddedDocuments(\"ActiveEffect\", [applySPWEffect]);\n\n        if (game.combat) {\n            let caster = game.combat.data.combatants.find(e => e.data.actorId == actor.data._id)\n            if (caster) {\n                let ztokenSPW = canvas.tokens.placeables.find(akarmi => akarmi.data.actorId == charID)\n                const newCombatant = {\n                    tokenId: ztokenSPW.id,\n                    hidden: ztokenSPW.data.hidden,\n                    actorId: ztokenSPW.actor.id,\n                    name: ztokenSPW.actor.name,\n                    initiative: caster.data.initiative\n                }\n                await game.combat.createEmbeddedDocuments(\"Combatant\", [newCombatant]);\n            }\n        }\n    }\n}",
+          "folder": null,
+          "sort": 0,
+          "permission": {
+            "default": 0
+          },
+          "flags": {}
+        }
+      }
+    },
+    "core": {
+      "sourceId": "Item.OkN3y17LmFpQOvMk"
+    },
+    "exportSource": {
+      "world": "5etest",
+      "system": "dnd5e",
+      "coreVersion": "9.249",
+      "systemVersion": "1.5.7"
+    }
+  }
+}
