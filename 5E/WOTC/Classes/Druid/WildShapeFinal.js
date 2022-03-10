@@ -1,9 +1,9 @@
-// Original script: https://gitlab.com/Freeze020/foundry-vtt-scripts/-/blob/master/DnD5e%20specific%20macros/Wildshape/WildShape-player.js 
+// Original script: https://gitlab.com/Freeze020/foundry-vtt-scripts/-/blob/master/DnD5e%20specific%20macros/Wildshape/WildShape-player.js
 // Special thanks to Freeze for the original macro
 // Thanks to Crymic and IanM32 for the support/ideas
 // Requires the following permissions: CREATE NEW ACTORS, CREATE NEW ITEMS
 // Requires the following modules: Dynamic Active Effects, Item Macros, Times-Up, About-Time
-
+// Macro version 1.01 // 20220310
 const subClassName = "Circle of the Moon"; // change if that is not your SubClass name for Circle of the Moon
 const CompendiumName = "Shapes Compendium";
 const RevertKeyWord = "Revert";
@@ -34,7 +34,12 @@ if (!druid) {
     return ui.notifications.info("you are not a Druid, dont try to bamboozle the game ;)");
 }
 
-const DurationInSeconds = Math.floor(druid.data.data.levels / 2) * 3600;
+
+var levels = druid.data.data.levels;
+let rlevel = levels >= 1 ? 2 : levels;
+
+
+const DurationInSeconds = Math.floor(rlevel / 2) * 3600;
 
 // Declare the WildShape Effect
 let applyWildShapeEffect = {
@@ -46,8 +51,8 @@ let applyWildShapeEffect = {
     }],
     label: item.name,
     origin: item.uuid,
-//    icon: "systems/dnd5e/icons/skills/green_13.jpg",
-      icon: item.data.img,
+    //    icon: "systems/dnd5e/icons/skills/green_13.jpg",
+    icon: item.data.img,
     duration: {
         "seconds": DurationInSeconds,
         startTime: game.time.worldTime
@@ -61,9 +66,9 @@ if (druid.data.data.subclass !== subClassName) {
     maxCR = (druid.data.data.levels > 17) ? 6 : (druid.data.data.levels > 14) ? 5 : (druid.data.data.levels > 11) ? 4 : (druid.data.data.levels > 8) ? 3 : (druid.data.data.levels > 5) ? 2 : 1;
 }
 
-let resourceKey = item.data.data.uses
+const resourceKey = Object.keys(macroToken.actor.data.data.resources).filter(k => macroToken.actor.data.data.resources[k].label === item.name).shift();
 
-if (druid.data.data.levels < 10 || druid.data.data.subclass !== subClassName || resourceKey.value < 2) {
+if (druid.data.data.levels < 10 || druid.data.data.subclass !== subClassName || macroToken.actor.data.data.resources[resourceKey].value < 2) {
     await selectShape("beast");
 } else {
 
@@ -161,8 +166,6 @@ async function selectShape(type) {
                         mergeSkills: true,
                     });
 
-                    await newToken.actor.createEmbeddedDocuments("ActiveEffect", [applyWildShapeEffect]);
-                    await newToken.actor.createEmbeddedDocuments("Item", [addRevert]);
 
                     if (druid.data.data.levels > 5) {
                         const updates = newToken.actor.itemTypes.weapon.filter(i => i.data.data.weaponType === "natural").map(i => ({
@@ -171,6 +174,12 @@ async function selectShape(type) {
                         }));
                         await newToken.actor.updateEmbeddedDocuments("Item", updates);
                     }
+                    while (newToken.actor.sheet.rendered === false) {
+                        await new Promise(r => setTimeout(r, 50));
+                    }
+                    newToken.actor.sheet.close();
+                    await newToken.actor.createEmbeddedDocuments("ActiveEffect", [applyWildShapeEffect]);
+                    await newToken.actor.createEmbeddedDocuments("Item", [addRevert]);
                 }
             }
         },
