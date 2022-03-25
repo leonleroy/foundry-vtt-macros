@@ -30,4 +30,9 @@ All of them are ItemMacros
 - Sleep: Ignores undeads, constructs everyone with Fey ancestry or "Sleep" immunity, already asleep.
 - Sleep CE: Same as Sleep but using Dfred's Convenient Effects
 - Spiritual Weapon: Fully automated, creates an actor and adds it to the tarcker, inititative will be the same as the caster has subtracts 0.01. Automaticly expires at the end of spell duration. 
+
+
+# Feats
+
+- Piercer: Auto-Piercer does the  following: reroll on natural 1, not showing confirmation dialogue when max value was rolled. 
 - WildShape: Fully automated Wildshape macro, creates "Reverse Wildshape" feat. after casting. Automatically expires at the end of spell duration. 
