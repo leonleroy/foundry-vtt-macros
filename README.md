@@ -34,5 +34,6 @@ All of them are ItemMacros
 
 # Feats
 
+- Colossus Slayer: Fully automated macro
 - Piercer: Auto-Piercer option: reroll on natural 1, not showing confirmation dialogue when max value was rolled. 
 - WildShape: Fully automated Wildshape macro, creates "Reverse Wildshape" feat. after casting. Automatically expires at the end of spell duration. 
