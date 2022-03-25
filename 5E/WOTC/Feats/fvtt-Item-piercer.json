@@ -1,0 +1,139 @@
+{
+  "name": "Piercer",
+  "type": "feat",
+  "img": "MyIcons/piercing-sword.svg",
+  "data": {
+    "description": {
+      "value": "<div>\n\t\t\t\t\n\t\t\t\t<div class=\"rd__b  rd__b--3\"><p>You have achieved a penetrating precision in combat, granting you the following benefits:</p><div class=\"rd__spc-inline-post\"></div><ul class=\"rd__list\"><li class=\"rd__li \">Increase your Strength or Dexterity by 1, to a maximum of 20.</li><li class=\"rd__li \">Once per turn, when you hit a creature with an attack that deals piercing damage, you can reroll one of the attack's damage dice, and you must use the new roll.</li><li class=\"rd__li \">When you score a critical hit that deals piercing damage to a creature, you can roll one additional damage die when determining the extra piercing damage the target takes.</li></ul></div>\n\t\t\t</div>",
+      "chat": "",
+      "unidentified": ""
+    },
+    "source": "TCE pg. 80",
+    "activation": {
+      "type": "",
+      "cost": 0,
+      "condition": ""
+    },
+    "duration": {
+      "value": 0,
+      "units": ""
+    },
+    "target": {
+      "value": 0,
+      "width": null,
+      "units": "",
+      "type": ""
+    },
+    "range": {
+      "value": 0,
+      "long": 0,
+      "units": null
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "consume": {
+      "type": "",
+      "target": null,
+      "amount": null
+    },
+    "ability": "",
+    "actionType": "",
+    "attackBonus": null,
+    "chatFlavor": "",
+    "critical": {
+      "threshold": null,
+      "damage": ""
+    },
+    "damage": {
+      "parts": [],
+      "versatile": ""
+    },
+    "formula": "",
+    "save": {
+      "ability": "",
+      "dc": null,
+      "scaling": "spell"
+    },
+    "requirements": "",
+    "recharge": {
+      "value": 0,
+      "charged": true
+    },
+    "attunement": 0
+  },
+  "effects": [
+    {
+      "_id": "datg848vw5y72dzh",
+      "changes": [
+        {
+          "key": "flags.dnd5e.DamageBonusMacro",
+          "mode": 0,
+          "value": "ItemMacro.Piercer",
+          "priority": "20"
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null
+      },
+      "icon": "MyIcons/piercing-sword.svg",
+      "label": "Piercer",
+      "transfer": true,
+      "flags": {
+        "core": {
+          "statusId": ""
+        },
+        "dae": {
+          "stackable": "none",
+          "durationExpression": "",
+          "macroRepeat": "none",
+          "specialDuration": [],
+          "transfer": true
+        },
+        "dnd5e-helpers": {
+          "rest-effect": "Ignore"
+        }
+      },
+      "tint": null,
+      "selectedKey": "flags.dnd5e.DamageBonusMacro"
+    }
+  ],
+  "flags": {
+    "srd5e": {
+      "page": "feats.html",
+      "source": "TCE",
+      "hash": "piercer_tce"
+    },
+    "itemacro": {
+      "macro": {
+        "data": {
+          "_id": null,
+          "name": "Piercer",
+          "type": "script",
+          "author": "sGDyf0LH8KxxtfaW",
+          "img": "icons/svg/dice-target.svg",
+          "scope": "global",
+          "command": "// Special thanks to thatlonelybugbear for the original macro\n// Requires the following modules: Dynamic Active Effects, Item Macros, Times-Up, About-Time, MidiQOL\n// Macro version 1.00 // 20220323\n\n\nfunction financial(x) {\n    return Number.parseFloat(x * 100).toFixed(2);\n}\n\nasync function WannaReRoll() {\n\n    return await new Promise((resolve) => {\n        let dialogEditor = new Dialog({\n            content: `<style>p{text-align: center;}</style><p>Chance of same roll: <b>${same}%</b> worse: <b>${less}%</b> better: <b>${more}%</b></p>`,\n            title: `${token.name}: The lowest d${dieFace} you rolled is ${Rolled}. Do you want to reroll it?`,\n            buttons: {\n                Yes: {\n                    label: \"Yes!\",\n                    icon: '<i class=\"far fa-thumbs-up\"></i><br>',\n                    callback: () => {\n                        resolve(1);\n                    },\n                },\n                No: {\n                    label: \"No!\",\n                    icon: '<i class=\"far fa-thumbs-down\"></i><br>',\n\n                    callback: () => {\n                        resolve(2);\n                    },\n                }\n            }\n        });\n        dialogEditor.render(true);\n    });\n}\n\nif (args[0].hitTargets.length < 1) return {};\nconst roll = args[0].damageRoll;\nconst dieFace = roll.terms[0].faces;\nconst Rolled = Math.min(...roll.terms[0].values)\nvar rollformula = roll._formula;\nconst isCrit = args[0].isCritical;\nlet chosen;\nlet autoReRollWorld = 'reroll';\nlet usePiercer = getProperty(actor.data, \"flags.dae.autoPiercer\");\nconst same = financial(1 / dieFace);\nconst less = financial((Rolled - 1) / dieFace);\nconst more = financial((dieFace - Rolled) / dieFace);\n\n\nif (args[0].tag === \"DamageBonus\" && args[0].item.data.damage.parts[0][1] === \"piercing\") {\n\n\n    if (dieFace == Rolled && usePiercer) {\n        chosen = 'No';\n    } else if (Rolled == 1 && usePiercer) {\n        chosen = 'Yes';\n        autoReRollWorld = ' autoreroll';\n    } else {\n        let ReRoll = await WannaReRoll();\n        switch (ReRoll) {\n            case 1:\n                chosen = 'Yes';\n                break;\n            default:\n                chosen = 'No';\n                break;\n        }\n    }\n\n\n    if (game.combat) {\n        let combatTime = game.combat.round;\n        let lastTime = actor.getFlag('world', 'PiercerTimeSlayerTime');\n        if (combatTime === lastTime) return {};\n        if (combatTime !== lastTime && chosen == 'Yes') {\n            await actor.setFlag('world', 'PiercerTimeSlayerTime', combatTime);\n        }\n    }\n\n    if (isCrit && chosen === 'Yes') {\n        return {\n            damageRoll: `1d${dieFace}+(1d${dieFace}-${Rolled})`,\n            flavor: `Critical Piercer Feat extra damage and ${autoReRollWorld} (Oldroll: ${Rolled})`\n        }\n    }\n\n    if (isCrit && (chosen === 'No')) return {\n        damageRoll: `1d${dieFace}`,\n        flavor: `Critical Piercer Feat extra damage`\n    }\n\n    if (!isCrit && chosen === 'Yes') {\n        return {\n            damageRoll: `(1d${dieFace}-${Rolled})`,\n            flavor: `Piercer feat ${autoReRollWorld} (Oldroll: ${Rolled})`\n        }\n    }\n}",
+          "folder": null,
+          "sort": 0,
+          "permission": {
+            "default": 0
+          },
+          "flags": {}
+        }
+      }
+    },
+    "core": {
+      "sourceId": "Item.mxNsE3BefXZseoBW"
+    },
+    "exportSource": {
+      "world": "5etest",
+      "system": "dnd5e",
+      "coreVersion": "9.255",
+      "systemVersion": "1.5.7"
+    }
+  }
+}
