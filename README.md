@@ -27,6 +27,7 @@ All of them are ItemMacros
 - Hex: Fully automated Hex macro, creates "Hex Transfer feat." after casting. Automatically expires at the end of spell duration. 
 - Hold Monster: Ignores humanoid and undead NPCs. Requests saves until succeed. Automaticly expires at the end of spell duration.
 - Hold Person: Ignores non-humanoid NPCs. Requests saves until succeed. Automaticly expires at the end of spell duration.
+- Shocking Graps: Searches in the definition of equipped armor for "metal" and sets advantage accordingly.
 - Sleep: Ignores undeads, constructs everyone with Fey ancestry or "Sleep" immunity, already asleep.
 - Sleep CE: Same as Sleep but using Dfred's Convenient Effects
 - Spiritual Weapon: Fully automated, creates an actor and adds it to the tracker, inititative will be the same as the caster's but subtracts 0.01. Automaticly expires at the end of spell duration. 
