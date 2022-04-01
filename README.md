@@ -24,17 +24,17 @@ Please enable MidiQOL concentration automatization
 All of them are ItemMacros
 
 - Goodberry: Creates a consumable item at actor with auto-destroy. Item destroys automaticly after 24hrs. No targeting is needed neither for spell nor for item itself.
-- Hex: Fully automated Hex macro, creates "Hex Transfer feat." after casting. Automatically expires at the end of spell duration. 
-- Hold Monster: Ignores humanoid and undead NPCs. Requests saves until succeed. Automaticly expires at the end of spell duration.
-- Hold Person: Ignores non-humanoid NPCs. Requests saves until succeed. Automaticly expires at the end of spell duration.
+- Hex: Fully automated Hex macro, creates "Hex Transfer feat." after casting.  
+- Hold Monster: Ignores humanoid and undead NPCs. Requests saves until succeed.
+- Hold Person: Ignores non-humanoid NPCs. Requests saves until succeed.
 - Shocking Graps: Searches in the definition of equipped armor for "metal" and sets advantage accordingly.
 - Sleep: Ignores undeads, constructs everyone with Fey ancestry or "Sleep" immunity, already asleep.
 - Sleep CE: Same as Sleep but using Dfred's Convenient Effects
-- Spiritual Weapon: Fully automated, creates an actor and adds it to the tracker, inititative will be the same as the caster's but subtracts 0.01. Automaticly expires at the end of spell duration. 
+- Spiritual Weapon: Fully automated, creates an actor, you can decide to add it to a tracker.
 - Toll the Dead
 
 # Feats
 
 - Colossus Slayer: Fully automated macro
 - Piercer: Auto-Piercer option: reroll on natural 1, not showing confirmation dialogue when max value was rolled. 
-- WildShape: Fully automated Wildshape macro, creates "Reverse Wildshape" feat. after casting. Automatically expires at the end of spell duration. 
+- WildShape: Fully automated Wildshape macro, creates "Reverse Wildshape" feat. If "Combat Wild Shape" is assigned to the caster adds "Selfheal" spell.
