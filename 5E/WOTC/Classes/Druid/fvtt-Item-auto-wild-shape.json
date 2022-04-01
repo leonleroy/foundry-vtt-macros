@@ -1,0 +1,139 @@
+{
+  "name": "Auto Wild Shape",
+  "type": "feat",
+  "img": "icons/creatures/mammals/elk-moose-marked-green.webp",
+  "data": {
+    "description": {
+      "value": "<p>Adding this feature to an actor will cause Wild Shape to:</p>\n<ul>\n<li>auto roll new form's HP</li>\n</ul>",
+      "chat": "",
+      "unidentified": ""
+    },
+    "source": "PHB pg. 64",
+    "activation": {
+      "type": "",
+      "cost": 0,
+      "condition": ""
+    },
+    "duration": {
+      "value": 0,
+      "units": ""
+    },
+    "target": {
+      "value": 0,
+      "width": null,
+      "units": "",
+      "type": ""
+    },
+    "range": {
+      "value": 0,
+      "long": 0,
+      "units": null
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "consume": {
+      "type": "",
+      "target": null,
+      "amount": null
+    },
+    "ability": "",
+    "actionType": "",
+    "attackBonus": null,
+    "chatFlavor": "",
+    "critical": {
+      "threshold": null,
+      "damage": ""
+    },
+    "damage": {
+      "parts": [],
+      "versatile": ""
+    },
+    "formula": "",
+    "save": {
+      "ability": "",
+      "dc": null,
+      "scaling": "spell"
+    },
+    "requirements": "",
+    "recharge": {
+      "value": 0,
+      "charged": true
+    },
+    "attunement": 0
+  },
+  "effects": [
+    {
+      "_id": "datg848vw5y72dzh",
+      "changes": [
+        {
+          "key": "flags.dae",
+          "mode": 0,
+          "value": "autoWildShape 1",
+          "priority": "20"
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null
+      },
+      "icon": "icons/creatures/mammals/elk-moose-marked-green.webp",
+      "label": "Auto Wild Shape",
+      "transfer": true,
+      "flags": {
+        "core": {
+          "statusId": ""
+        },
+        "dae": {
+          "stackable": "none",
+          "durationExpression": "",
+          "macroRepeat": "none",
+          "specialDuration": [],
+          "transfer": true
+        },
+        "dnd5e-helpers": {
+          "rest-effect": "Ignore"
+        }
+      },
+      "tint": null,
+      "selectedKey": "flags.dae"
+    }
+  ],
+  "flags": {
+    "srd5e": {
+      "page": "feats.html",
+      "source": "TCE",
+      "hash": "piercer_tce"
+    },
+    "itemacro": {
+      "macro": {
+        "data": {
+          "_id": null,
+          "name": "Auto Piercer",
+          "type": "script",
+          "author": "sGDyf0LH8KxxtfaW",
+          "img": "icons/svg/dice-target.svg",
+          "scope": "global",
+          "command": "",
+          "folder": null,
+          "sort": 0,
+          "permission": {
+            "default": 0
+          },
+          "flags": {}
+        }
+      }
+    },
+    "core": {
+      "sourceId": "Item.mxNsE3BefXZseoBW"
+    },
+    "exportSource": {
+      "world": "5etest",
+      "system": "dnd5e",
+      "coreVersion": "9.255",
+      "systemVersion": "1.5.7"
+    }
+  }
+}
