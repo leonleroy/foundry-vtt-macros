@@ -7,6 +7,7 @@ I am using the following FoundryVTT modules for my macros:
 - Advanced Macros
 - Times-Up
 - About Time
+- Advanced Macro
 
 and in some cases:
 
