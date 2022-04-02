@@ -14,6 +14,7 @@ and in some cases:
 - DFreds Convenient Effects
 - Dynamic Active Effects
 - Monk's Token Bar
+- Token Magic FX (Mirror Image)
 
 
 Please enable MidiQOL concentration automatization
@@ -28,6 +29,7 @@ All of them are ItemMacros
 - Hex: Fully automated Hex macro, creates "Hex Transfer feat." after casting.  
 - Hold Monster: Ignores humanoid and undead NPCs. Requests saves until succeed.
 - Hold Person: Ignores non-humanoid NPCs. Requests saves until succeed.
+- Mirror Image: Fully automated. Animated if Token Magic FX is enabled.
 - Shocking Graps: Searches in the definition of equipped armor for "metal" and sets advantage accordingly.
 - Sleep: Ignores undeads, constructs everyone with Fey ancestry or "Sleep" immunity, already asleep.
 - Sleep CE: Same as Sleep but using Dfred's Convenient Effects
