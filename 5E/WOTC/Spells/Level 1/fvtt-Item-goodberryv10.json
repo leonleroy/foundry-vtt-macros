@@ -1,0 +1,175 @@
+{
+  "name": "Goodberry",
+  "type": "spell",
+  "img": "modules/plutonium/media/icon/spell/phb-goodberry.webp",
+  "effects": [],
+  "flags": {
+    "srd5e": {
+      "page": "spells.html",
+      "source": "PHB",
+      "hash": "goodberry_phb",
+      "propDroppable": "spell"
+    },
+    "itemacro": {
+      "macro": {
+        "data": {
+          "_id": null,
+          "name": "Goodberry",
+          "type": "script",
+          "author": "sGDyf0LH8KxxtfaW",
+          "img": "icons/svg/dice-target.svg",
+          "scope": "global",
+          "command": "// Requires the following modules: Item Macros, Times-Up, About-Time, MidiQOL\n// Original script: https://gitlab.com/crymic/foundry-vtt-macros/-/blob/8.x/5e/Spells/Level%201/Goodberry.js\n// Icon if you have Plutonim addon: modules/plutonium/media/icon/spell/phb-goodberry.webp \n// otherwise use this: icons/consumables/fruit/berry-leaf-pink.webp\n// Macro version 1.1 // 20220210\n\nlet itemdata = [{\n    \"name\": \"Goodberry\",\n    \"type\": \"consumable\",\n    \"img\": \"modules/plutonium/media/icon/spell/phb-goodberry.webp\",\n    \"data\": {\n        \"description\": {\n            \"value\": \"<p>Eating a berry restores 1 hit point, and the berry provides enough nourishment to sustain a creature for one day.</p>\",\n            \"chat\": \"\",\n            \"unidentified\": \"\"\n        },\n        \"source\": \"\",\n        \"quantity\": 10,\n        \"weight\": 0.002,\n        \"price\": \"0\",\n        \"attunement\": 0,\n        \"equipped\": false,\n        \"rarity\": \"common\",\n        \"identified\": true,\n        \"activation\": {\n            \"type\": \"action\",\n            \"cost\": 1,\n            \"condition\": \"\"\n        },\n        \"duration\": {\n            \"value\": null,\n            \"units\": \"\"\n        },\n        \"target\": {\n            \"value\": null,\n            \"width\": null,\n            \"units\": \"self\",\n            \"type\": \"\"\n        },\n        \"range\": {\n            \"value\": null,\n            \"long\": null,\n            \"units\": \"touch\"\n        },\n        \"uses\": {\n            \"value\": 1,\n            \"max\": \"1\",\n            \"per\": \"charges\",\n            \"autoDestroy\": true\n        },\n        \"consume\": {\n            \"type\": \"\",\n            \"target\": \"\",\n            \"amount\": 1\n        },\n        \"ability\": \"\",\n        \"actionType\": \"util\",\n        \"attackBonus\": 0,\n        \"chatFlavor\": \"\",\n        \"critical\": {\n            \"threshold\": null,\n            \"damage\": \"\"\n        },\n        \"damage\": {\n            \"parts\": [],\n            \"versatile\": \"\"\n        },\n        \"formula\": \"\",\n        \"save\": {\n            \"ability\": \"\",\n            \"dc\": null,\n            \"scaling\": \"spell\"\n        },\n        \"consumableType\": \"food\"\n    },\n    \"effects\": [],\n    \"flags\": {\n        \"midi-qol\": {\n            \"onUseMacroName\": \"[preActiveEffects]ItemMacro\",\n            \"effectActivation\": false\n        },\n        \"itemacro\": {\n            \"macro\": {\n                \"data\": {\n                    \"_id\": null,\n                    \"name\": \"Goodberry\",\n                    \"type\": \"script\",\n                    \"author\": game.userId,\n                    \"img\": \"icons/svg/dice-target.svg\",\n                    \"scope\": \"global\",\n                    \"command\": \"if (actor.data.data.attributes.hp.value < actor.data.data.attributes.hp.max) {\\n    let newHP = actor.data.data.attributes.hp.value + 1;\\n    await actor.update({\\n        \\\"data.attributes.hp.value\\\": newHP\\n    });\\n    ChatMessage.create({\\n        content: `<br>Eat a ${item.name} and gained 1 HP.`,\\n        speaker: {\\n            alias: token.actor.name\\n        },\\n        type: CONST.CHAT_MESSAGE_TYPES.OOC\\n    });\\n\\n} else {\\n    ChatMessage.create({\\n        content: `<br>Eat a ${item.name}.`,\\n        speaker: {\\n            alias: token.actor.name\\n        },\\n        type: CONST.CHAT_MESSAGE_TYPES.OOC\\n    });\\n}\",\n                    \"folder\": null,\n                    \"sort\": 0,\n                    \"permission\": {\n                        \"default\": 0\n                    },\n                }\n            }\n        },\n    }\n}];\n\nawait actor.createEmbeddedDocuments(\"Item\", itemdata);\n\n\nawait ChatMessage.create({\n    content: `<br>A batch of ${item.name} has been placed in your inventory.`,\n    speaker: {\n        alias: actor.name\n    },\n    type: CONST.CHAT_MESSAGE_TYPES.OOC\n});\n\n\ngame.Gametime.doIn({\n    hours: 24,\n}, async (zactoruuid, iname) => {\n\n    const actorToken = await fromUuid(zactoruuid);\n    const yactor = actorToken?.actor ? actorToken?.actor : actorToken;\n\n    if (yactor.data.items.find(i => i.name === iname && i.type === \"consumable\")) {\n        yactor.data.items.find(i => i.name === iname && i.type === \"consumable\").delete()\n\n        await ChatMessage.create({\n            content: `<br>The batch of ${iname} expired.`,\n            speaker: {\n                alias: yactor.name\n            },\n            type: CONST.CHAT_MESSAGE_TYPES.OOC\n        });\n    }\n}, actor.uuid, item.name);",
+          "folder": null,
+          "sort": 0,
+          "permission": {
+            "default": 0
+          },
+          "flags": {}
+        },
+        "name": "Goodberry",
+        "type": "script",
+        "scope": "global",
+        "command": "// Requires the following modules: Item Macros, Times-Up, About-Time, MidiQOL\n// Original script: https://gitlab.com/crymic/foundry-vtt-macros/-/blob/8.x/5e/Spells/Level%201/Goodberry.js\n// Icon if you have Plutonim addon: modules/plutonium/media/icon/spell/phb-goodberry.webp \n// otherwise use this: icons/consumables/fruit/berry-leaf-pink.webp\n// Macro version 1.2 // 20221114 For FoundryVTT V10\n\n\nlet itemdata = [{\n    \"name\": \"Goodberry\",\n    \"type\": \"consumable\",\n    \"img\": \"modules/plutonium/media/icon/spell/phb-goodberry.webp\",\n    \"data\": {\n        \"description\": {\n            \"value\": \"<p>Eating a berry restores 1 hit point, and the berry provides enough nourishment to sustain a creature for one day.</p>\",\n            \"chat\": \"\",\n            \"unidentified\": \"\"\n        },\n        \"source\": \"\",\n        \"quantity\": 10,\n        \"weight\": 0.002,\n        \"price\": \"0\",\n        \"attunement\": 0,\n        \"equipped\": false,\n        \"rarity\": \"common\",\n        \"identified\": true,\n        \"activation\": {\n            \"type\": \"action\",\n            \"cost\": 1,\n            \"condition\": \"\"\n        },\n        \"duration\": {\n            \"value\": null,\n            \"units\": \"\"\n        },\n        \"target\": {\n            \"value\": null,\n            \"width\": null,\n            \"units\": \"self\",\n            \"type\": \"\"\n        },\n        \"range\": {\n            \"value\": null,\n            \"long\": null,\n            \"units\": \"touch\"\n        },\n        \"uses\": {\n            \"value\": 1,\n            \"max\": \"1\",\n            \"per\": \"charges\",\n            \"autoDestroy\": true\n        },\n        \"consume\": {\n            \"type\": \"\",\n            \"target\": \"\",\n            \"amount\": 1\n        },\n        \"ability\": \"\",\n        \"actionType\": \"util\",\n        \"attackBonus\": 0,\n        \"chatFlavor\": \"\",\n        \"critical\": {\n            \"threshold\": null,\n            \"damage\": \"\"\n        },\n        \"damage\": {\n            \"parts\": [],\n            \"versatile\": \"\"\n        },\n        \"formula\": \"\",\n        \"save\": {\n            \"ability\": \"\",\n            \"dc\": null,\n            \"scaling\": \"spell\"\n        },\n        \"consumableType\": \"food\"\n    },\n    \"effects\": [],\n    \"flags\": {\n        \"midi-qol\": {\n            \"onUseMacroName\": \"[preActiveEffects]ItemMacro\",\n            \"effectActivation\": false\n        },\n        \"itemacro\": {\n            \"macro\": {\n                \"data\": {\n                    \"_id\": null,\n                    \"name\": \"Goodberry\",\n                    \"type\": \"script\",\n                    \"author\": game.userId,\n                    \"img\": \"icons/svg/dice-target.svg\",\n                    \"scope\": \"global\",\n                    \"command\": \"if (actor.system.attributes.hp.value < actor.system.attributes.hp.max) {\\n    let newHP = actor.system.attributes.hp.value + 1;\\n    await actor.update({\\n        \\\"data.attributes.hp.value\\\": newHP\\n    });\\n    ChatMessage.create({\\n        content: `<br>Eat a ${item.name} and gained 1 HP.`,\\n        speaker: {\\n            alias: token.actor.name\\n        },\\n        type: CONST.CHAT_MESSAGE_TYPES.OOC\\n    });\\n\\n} else {\\n    ChatMessage.create({\\n        content: `<br>Eat a ${item.name}.`,\\n        speaker: {\\n            alias: token.actor.name\\n        },\\n        type: CONST.CHAT_MESSAGE_TYPES.OOC\\n    });\\n}\",\n                    \"folder\": null,\n                    \"sort\": 0,\n                    \"permission\": {\n                        \"default\": 0\n                    },\n                }\n            }\n        },\n    }\n}];\n\nawait actor.createEmbeddedDocuments(\"Item\", itemdata);\n\n\nawait ChatMessage.create({\n    content: `<br>A batch of ${item.name} has been placed in your inventory.`,\n    speaker: {\n        alias: actor.name\n    },\n    type: CONST.CHAT_MESSAGE_TYPES.OOC\n});\n\n\ngame.Gametime.doIn({\n    hours: 24,\n}, async (zactoruuid, iname) => {\n\n    const actorToken = await fromUuid(zactoruuid);\n    const yactor = actorToken?.actor ? actorToken?.actor : actorToken;\n\n    if (yactor.data.items.find(i => i.name === iname && i.type === \"consumable\")) {\n        yactor.data.items.find(i => i.name === iname && i.type === \"consumable\").delete()\n\n        await ChatMessage.create({\n            content: `<br>The batch of ${iname} expired.`,\n            speaker: {\n                alias: yactor.name\n            },\n            type: CONST.CHAT_MESSAGE_TYPES.OOC\n        });\n    }\n}, actor.uuid, item.name);",
+        "author": "sGDyf0LH8KxxtfaW",
+        "_id": null,
+        "img": "icons/svg/dice-target.svg",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "systemId": null,
+          "systemVersion": null,
+          "coreVersion": null,
+          "createdTime": null,
+          "modifiedTime": null,
+          "lastModifiedBy": null
+        }
+      }
+    },
+    "midi-qol": {
+      "effectActivation": false,
+      "onUseMacroName": "[preActiveEffects]ItemMacro"
+    },
+    "enhanced-terrain-layer": {
+      "multiple": null,
+      "elevation": null,
+      "depth": null,
+      "environment": ""
+    },
+    "core": {
+      "sourceId": "Item.0LEplTX48GT86rCk"
+    },
+    "exportSource": {
+      "world": "5etest",
+      "system": "dnd5e",
+      "coreVersion": "10.290",
+      "systemVersion": "2.0.3"
+    },
+    "midiProperties": {
+      "nodam": false,
+      "fulldam": false,
+      "halfdam": false,
+      "rollOther": false,
+      "critOther": false,
+      "magicdam": false,
+      "magiceffect": false,
+      "concentration": false,
+      "toggleEffect": false,
+      "ignoreTotalCover": false
+    }
+  },
+  "system": {
+    "description": {
+      "value": "<div class=\"rd__b  rd__b--3\"><p>Up to ten berries appear in your hand and are infused with magic for the duration. A creature can use its action to eat one berry. Eating a berry restores 1 hit point, and the berry provides enough nourishment to sustain a creature for one day.</p><div class=\"rd__spc-inline-post\"></div><p>The berries lose their potency if they have not been consumed within 24 hours of the casting of this spell.</p></div>",
+      "chat": "",
+      "unidentified": ""
+    },
+    "source": "PHB",
+    "activation": {
+      "type": "action",
+      "cost": 1,
+      "condition": ""
+    },
+    "duration": {
+      "value": null,
+      "units": "inst"
+    },
+    "target": {
+      "value": null,
+      "width": null,
+      "units": "touch",
+      "type": ""
+    },
+    "range": {
+      "value": null,
+      "long": null,
+      "units": "touch"
+    },
+    "uses": {
+      "value": 0,
+      "max": "0",
+      "per": "",
+      "recovery": ""
+    },
+    "consume": {
+      "type": "",
+      "target": "",
+      "amount": null
+    },
+    "ability": "wis",
+    "actionType": "other",
+    "attackBonus": null,
+    "chatFlavor": "",
+    "critical": {
+      "threshold": null,
+      "damage": ""
+    },
+    "damage": {
+      "parts": [],
+      "versatile": ""
+    },
+    "formula": "",
+    "save": {
+      "ability": "",
+      "dc": null,
+      "scaling": "wis"
+    },
+    "level": 1,
+    "school": "trs",
+    "components": {
+      "value": "",
+      "vocal": true,
+      "somatic": true,
+      "material": true,
+      "ritual": false,
+      "concentration": false
+    },
+    "materials": {
+      "value": "a sprig of mistletoe",
+      "consumed": false,
+      "cost": 0,
+      "supply": 0
+    },
+    "preparation": {
+      "mode": "prepared",
+      "prepared": true
+    },
+    "scaling": {
+      "mode": "none",
+      "formula": ""
+    },
+    "attunement": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "2.0.3",
+    "coreVersion": "10.290",
+    "createdTime": null,
+    "modifiedTime": 1668430253552,
+    "lastModifiedBy": "sGDyf0LH8KxxtfaW"
+  }
+}
