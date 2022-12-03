@@ -2,7 +2,9 @@
 // Original script: https://gitlab.com/crymic/foundry-vtt-macros/-/blob/8.x/5e/Spells/Level%201/Goodberry.js
 // Icon if you have Plutonim addon: modules/plutonium/media/icon/spell/phb-goodberry.webp 
 // otherwise use this: icons/consumables/fruit/berry-leaf-pink.webp
-// Macro version 1.1 // 20220210
+// Macro version 1.2 // 20221114 For FoundryVTT V10
+
+
 let itemdata = [{
     "name": "Goodberry",
     "type": "consumable",
@@ -87,7 +89,7 @@ let itemdata = [{
                     "author": game.userId,
                     "img": "icons/svg/dice-target.svg",
                     "scope": "global",
-                    "command": "if (actor.data.data.attributes.hp.value < actor.data.data.attributes.hp.max) {\n    let newHP = actor.data.data.attributes.hp.value + 1;\n    await actor.update({\n        \"data.attributes.hp.value\": newHP\n    });\n    ChatMessage.create({\n        content: `<br>Eat a ${item.name} and gained 1 HP.`,\n        speaker: {\n            alias: token.actor.name\n        },\n        type: CONST.CHAT_MESSAGE_TYPES.OOC\n    });\n\n} else {\n    ChatMessage.create({\n        content: `<br>Eat a ${item.name}.`,\n        speaker: {\n            alias: token.actor.name\n        },\n        type: CONST.CHAT_MESSAGE_TYPES.OOC\n    });\n}",
+                    "command": "if (actor.system.attributes.hp.value < actor.system.attributes.hp.max) {\n    let newHP = actor.system.attributes.hp.value + 1;\n    await actor.update({\n        \"data.attributes.hp.value\": newHP\n    });\n    ChatMessage.create({\n        content: `<br>Eat a ${item.name} and gained 1 HP.`,\n        speaker: {\n            alias: token.actor.name\n        },\n        type: CONST.CHAT_MESSAGE_TYPES.OOC\n    });\n\n} else {\n    ChatMessage.create({\n        content: `<br>Eat a ${item.name}.`,\n        speaker: {\n            alias: token.actor.name\n        },\n        type: CONST.CHAT_MESSAGE_TYPES.OOC\n    });\n}",
                     "folder": null,
                     "sort": 0,
                     "permission": {
@@ -118,8 +120,8 @@ game.Gametime.doIn({
     const actorToken = await fromUuid(zactoruuid);
     const yactor = actorToken?.actor ? actorToken?.actor : actorToken;
 
-    if (yactor.data.items.find(i => i.name === iname && i.type === "consumable")) {
-        yactor.data.items.find(i => i.name === iname && i.type === "consumable").delete()
+    if (yactor.items.find(i => i.name === iname && i.type === "consumable")) {
+        yactor.items.find(i => i.name === iname && i.type === "consumable").delete()
 
         await ChatMessage.create({
             content: `<br>The batch of ${iname} expired.`,

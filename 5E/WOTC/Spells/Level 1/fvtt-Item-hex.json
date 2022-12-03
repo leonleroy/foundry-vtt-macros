@@ -1,8 +1,96 @@
 {
-  "name": "Hex",
+  "name": "Hexv10",
   "type": "spell",
   "img": "modules/plutonium/media/icon/spell/phb-hex.webp",
-  "data": {
+  "effects": [],
+  "flags": {
+    "srd5e": {
+      "page": "spells.html",
+      "source": "PHB",
+      "hash": "hex_phb",
+      "propDroppable": "spell"
+    },
+    "midi-qol": {
+      "effectActivation": false,
+      "onUseMacroName": "[postActiveEffects]ItemMacro",
+      "onUseMacroParts": {
+        "items": {
+          "0": {
+            "macroName": "ItemMacro",
+            "option": "postActiveEffects"
+          }
+        }
+      }
+    },
+    "enhanced-terrain-layer": {
+      "multiple": null,
+      "elevation": null,
+      "depth": null,
+      "environment": ""
+    },
+    "itemacro": {
+      "macro": {
+        "data": {
+          "_id": null,
+          "name": "Hex",
+          "type": "script",
+          "author": "sGDyf0LH8KxxtfaW",
+          "img": "icons/svg/dice-target.svg",
+          "scope": "global",
+          "command": "// Requires the following modules: Dynamic Active Effects, Item Macros, Times-Up, About-Time, MidiQOL, Advanced Macros\n// Macro version 1.03 // 20220401\n\nlet movehexname = \"Transfer Hex\";\n\nif (args[0] === \"on\") {\n    return\n}\n\nif (args[0] === \"off\") {\n    let actorToken = await fromUuid(args[args.length - 1].actorUuid);\n    const yactor = actorToken?.actor ? actorToken?.actor : actorToken;\n    if (yactor.items.find(e => e.data.name === movehexname)) {\n        yactor.items.find(e => e.data.name === movehexname).delete()\n    };\n    return\n}\n\n\nasync function setupHex(hexAb) {\n\n    let HexedEffect = {\n        label: item.name + \" cursed\",\n        origin: item.uuid,\n        icon: item.data.img,\n        duration: {\n            \"seconds\": durationSeconds,\n            startTime: game.time.worldTime\n        },\n        changes: [{\n            key: `flags.midi-qol.disadvantage.ability.check.${hexAb}`,\n            mode: 2,\n            value: 1,\n            priority: 20\n        }]\n    }\n\n    await MidiQOL.socket().executeAsGM(\"createEffects\", {\n        actorUuid: args[0].targets[0].actor.uuid,\n        effects: [HexedEffect]\n    });\n}\n\n\nif (args[0].tag === \"OnUse\") {\n\n    let target = args[0].targets[0].data._id;\n\n    var durationSeconds = (args[0].spellLevel >= 5) ? 86400 : (args[0].spellLevel >= 3) ? 28800 : 3600;\n\n    new Dialog({\n        title: \"Choose an ability\",\n        buttons: [{\n                label: \"STR\",\n                icon: '<i class=\"fas fa-hammer\"></i><br>',\n                callback: () => setupHex(\"str\"),\n            },\n            {\n                label: \"DEX\",\n                icon: '<i class=\"fas fa-quidditch\"></i><br>',\n                callback: () => setupHex(\"dex\"),\n            },\n            {\n                label: \"CON\",\n                icon: '<i class=\"fas fa-heartbeat\"></i><br>',\n                callback: () => setupHex(\"con\"),\n            },\n            {\n                label: \"INT\",\n                icon: '<i class=\"fas fa-brain\"></i><br>',\n                callback: () => setupHex(\"int\"),\n            },\n            {\n                label: \"WIS\",\n                icon: '<i class=\"fas fa-user-graduate\"></i><br>',\n                callback: () => setupHex(\"wis\"),\n            },\n            {\n                label: \"CHA\",\n                icon: '<i class=\"fas fa-theater-masks\"></i><br>',\n                callback: () => setupHex(\"cha\"),\n            },\n        ],\n    }).render(true);\n\n\n    const effectData = {\n        changes: [{\n                key: \"flags.midi-qol.hex\",\n                mode: 5,\n                value: target,\n                priority: 20\n            },\n            {\n                key: \"flags.dnd5e.DamageBonusMacro\",\n                mode: 5,\n                value: `ItemMacro.${item.name}`,\n                priority: 20\n            },\n            {\n                key: \"macro.itemMacro\",\n                mode: 0,\n                value: `ItemMacro.${item.name}`,\n                priority: 20\n            },\n        ],\n        origin: item.uuid,\n        disabled: false,\n\n\n        \"duration\": {\n            \"seconds\": durationSeconds,\n            \"startTime\": game.time.worldTime\n        },\n        icon: item.data.img,\n        label: item.name\n    }\n\n    let itemdata = [{\n        \"name\": movehexname,\n        \"type\": \"feat\",\n        \"img\": \"modules/plutonium/media/icon/spell/phb-hex.webp\",\n        \"data\": {\n            \"description\": {\n                \"value\": \"<p>If the target drops to 0 hit points before this spell ends, you can use a bonus action on a subsequent turn of yours to curse a new creature.</p>\",\n                \"chat\": \"\",\n                \"unidentified\": \"\"\n            },\n            \"source\": \"PHB pg. 251\",\n            \"activation\": {\n                \"type\": \"bonus\",\n                \"cost\": 1,\n                \"condition\": \"\"\n            },\n            \"duration\": {\n                \"value\": null,\n                \"units\": \"\"\n            },\n            \"target\": {\n                \"value\": 1,\n                \"width\": null,\n                \"units\": \"any\",\n                \"type\": \"creature\"\n            },\n            \"range\": {\n                \"value\": null,\n                \"long\": null,\n                \"units\": \"\"\n            },\n            \"uses\": {\n                \"value\": null,\n                \"max\": \"\",\n                \"per\": \"\"\n            },\n            \"consume\": {\n                \"type\": \"\",\n                \"target\": \"\",\n                \"amount\": null\n            },\n            \"ability\": \"\",\n            \"actionType\": \"util\",\n            \"attackBonus\": 0,\n            \"chatFlavor\": \"\",\n            \"critical\": {\n                \"threshold\": null,\n                \"damage\": \"\"\n            },\n            \"damage\": {\n                \"parts\": [],\n                \"versatile\": \"\"\n            },\n            \"formula\": \"\",\n            \"save\": {\n                \"ability\": \"\",\n                \"dc\": null,\n                \"scaling\": \"spell\"\n            },\n            \"requirements\": \"Enchantment\",\n            \"recharge\": {\n                \"value\": null,\n                \"charged\": false\n            },\n            \"attunement\": null\n        },\n        \"effects\": [],\n        \"flags\": {\n            \"midi-qol\": {\n                \"effectActivation\": false,\n                \"onUseMacroName\": \"[postActiveEffects]ItemMacro\"\n            },\n            \"itemacro\": {\n                \"macro\": {\n                    \"data\": {\n                        \"_id\": null,\n                        \"name\": \"Move Hex\",\n                        \"type\": \"script\",\n                        \"author\": \"sGDyf0LH8KxxtfaW\",\n                        \"img\": \"icons/svg/dice-target.svg\",\n                        \"scope\": \"global\",\n                        \"command\": \"let target = args[0].targets[0].data._id;\\nlet effectLabel = \\\"Hex\\\";\\nlet hexed = actor.effects.find(e => e.data.label === effectLabel);\\nif (!hexed) return ui.notifications.warn(`You don't have an active Hex to curse a new target.`);\\nlet remainingsecs = hexed.data.duration.seconds + hexed.data.duration.startTime - game.time.worldTime;\\nlet oldhexedtoken = canvas.tokens.get(getProperty(args[0].actor.flags, \\\"midi-qol.hex\\\"));\\nif (oldhexedtoken.data.actorData.data.attributes.hp.value > 0) return ui.notifications.warn(`You can only curse a new creature after the current one drops to 0 HP.`);\\neffectLabel = \\\"Hex cursed\\\";\\nif (args[0].targets[0].actor.effects.find(e => e.data.label === effectLabel)) return ui.notifications.warn(`Target is already Hex cursed!`);\\nlet transfereffect = oldhexedtoken.data.actorData.effects.find(e => e.label === effectLabel);\\nawait MidiQOL.socket().executeAsGM(\\\"createEffects\\\", {\\n    actorUuid: args[0].targets[0].actor.uuid,\\n    effects: [transfereffect]\\n});\\nawait MidiQOL.socket().executeAsGM(\\\"removeEffects\\\", {\\n    actorUuid: oldhexedtoken.actor.uuid,\\n    effects: [transfereffect._id]\\n});\\n\\nlet changes = hexed.data.changes;\\nchanges[0] = {\\n    key: \\\"flags.midi-qol.hex\\\",\\n    mode: 5,\\n    value: target,\\n    priority: 20\\n}\\nawait hexed.update({\\n    changes\\n});\\n\\nlet curs = args[0].targets[0].actor.effects.find(e => e.data.label === effectLabel);\\nlet oldhextokenuuid = oldhexedtoken.actor.uuid;\\nlet newhextokenuuid = args[0].targets[0].actor.uuid;\\nconst concentrationData = actor.getFlag(\\\"midi-qol\\\", \\\"concentration-data\\\");\\n\\nfor (let i = 0; i < concentrationData.targets.length; i++) {\\n    if (concentrationData.targets[i].tokenUuid === oldhextokenuuid) {\\n        concentrationData.targets[i].tokenUuid = newhextokenuuid;\\n        actor.setFlag(\\\"midi-qol\\\", \\\"concentration-data\\\", concentrationData);\\n    }\\n}\\n\\nawait MidiQOL.socket().executeAsGM(\\\"updateEffects\\\", {\\n    actorUuid: args[0].targets[0].actor.uuid,\\n    updates: [{\\n        _id: curs.id,\\n        duration: {\\n            startTime: game.time.worldTime,\\n            seconds: remainingsecs\\n        }\\n    }]\\n});\",\n                        \"folder\": null,\n                        \"sort\": 0,\n                        \"permission\": {\n                            \"default\": 0\n                        },\n                        \"flags\": {}\n                    }\n                }\n            },\n        }\n    }]\n\n    await actor.createEmbeddedDocuments(\"Item\", itemdata);\n    await actor.createEmbeddedDocuments(\"ActiveEffect\", [effectData]);\n\n    let effectLabel = \"Concentrating\";\n    let effect = actor.effects.find(e => e.data.label === effectLabel);\n\n    await actor.updateEmbeddedDocuments(\"ActiveEffect\", [{\n        _id: effect.id,\n        duration: {\n            seconds: durationSeconds\n        }\n    }]);\n}\nif (args[0].tag === \"DamageBonus\") {\n    if (![\"mwak\", \"rwak\", \"msak\", \"rsak\"].includes(args[0].item.data.actionType)) return {};\n    if (args[0].hitTargets.length === 0) return;\n    let targetId = args[0].targets[0].data._id;\n    if (targetId !== getProperty(args[0].actor.flags, \"midi-qol.hex\")) return {};\n    const diceMult = args[0].isCritical ? 2 : 1;\n    let target = await fromUuid(args[0].hitTargetUuids[0] ?? \"\");\n    let numDice = 1;\n    if (args[0].isCritical) numDice = numDice * 2;\n    return {\n        damageRoll: `${numDice}d6[necrotic]`,\n        flavor: \"Hex - Damage Roll (necrotic)\"\n    }\n}",
+          "folder": null,
+          "sort": 0,
+          "permission": {
+            "default": 0
+          },
+          "flags": {}
+        },
+        "name": "Hex",
+        "type": "script",
+        "scope": "global",
+        "command": "// Requires the following modules: Dynamic Active Effects, Item Macros, Times-Up, About-Time, MidiQOL\n// Macro version 1.04 // 20221114 For FoundryVTT V10\n\nlet movehexname = \"Transfer Hex\";\n\nif (args[0] === \"on\") {\n    return\n}\n\nif (args[0] === \"off\") {\n    let actorToken = await fromUuid(args[args.length - 1].actorUuid);\n    const yactor = actorToken?.actor ? actorToken?.actor : actorToken;\n    if (yactor.items.find(e => e.name === movehexname)) {\n        yactor.items.find(e => e.name === movehexname).delete()\n    };\n    return\n}\n\n\nasync function setupHex(hexAb) {\n\n    let HexedEffect = {\n        label: item.name + \" cursed\",\n        origin: item.uuid,\n        icon: item.img,\n        duration: {\n            \"seconds\": durationSeconds,\n            startTime: game.time.worldTime\n        },\n        changes: [{\n            key: `flags.midi-qol.disadvantage.ability.check.${hexAb}`,\n            mode: 2,\n            value: 1,\n            priority: 20\n        }]\n    }\n\n    await MidiQOL.socket().executeAsGM(\"createEffects\", {\n        actorUuid: args[0].targets[0].actor.uuid,\n        effects: [HexedEffect]\n    });\n}\n\n\nif (args[0].tag === \"OnUse\") {\n\n    let target = args[0].targets[0]._id;\n\n    var durationSeconds = (args[0].spellLevel >= 5) ? 86400 : (args[0].spellLevel >= 3) ? 28800 : 3600;\n\n    new Dialog({\n        title: \"Choose an ability\",\n        buttons: [{\n                label: \"STR\",\n                icon: '<i class=\"fas fa-hammer\"></i><br>',\n                callback: () => setupHex(\"str\"),\n            },\n            {\n                label: \"DEX\",\n                icon: '<i class=\"fas fa-quidditch\"></i><br>',\n                callback: () => setupHex(\"dex\"),\n            },\n            {\n                label: \"CON\",\n                icon: '<i class=\"fas fa-heartbeat\"></i><br>',\n                callback: () => setupHex(\"con\"),\n            },\n            {\n                label: \"INT\",\n                icon: '<i class=\"fas fa-brain\"></i><br>',\n                callback: () => setupHex(\"int\"),\n            },\n            {\n                label: \"WIS\",\n                icon: '<i class=\"fas fa-user-graduate\"></i><br>',\n                callback: () => setupHex(\"wis\"),\n            },\n            {\n                label: \"CHA\",\n                icon: '<i class=\"fas fa-theater-masks\"></i><br>',\n                callback: () => setupHex(\"cha\"),\n            },\n        ],\n    }).render(true);\n\n\n    const effectData = {\n        changes: [{\n                key: \"flags.midi-qol.hex\",\n                mode: 5,\n                value: target,\n                priority: 20\n            },\n            {\n                key: \"flags.dnd5e.DamageBonusMacro\",\n                mode: 5,\n                value: `ItemMacro.${item.name}`,\n                priority: 20\n            },\n            {\n                key: \"macro.itemMacro\",\n                mode: 0,\n                value: `ItemMacro.${item.name}`,\n                priority: 20\n            },\n        ],\n        origin: item.uuid,\n        disabled: false,\n\n\n        \"duration\": {\n            \"seconds\": durationSeconds,\n            \"startTime\": game.time.worldTime\n        },\n        icon: item.img,\n        label: item.name\n    }\n\t\n\t    let itemdata = [{\n        \"name\": movehexname,\n        \"type\": \"feat\",\n        \"img\": \"modules/plutonium/media/icon/spell/phb-hex.webp\",\n        \"data\": {\n            \"description\": {\n                \"value\": \"<p>If the target drops to 0 hit points before this spell ends, you can use a bonus action on a subsequent turn of yours to curse a new creature.</p>\",\n                \"chat\": \"\",\n                \"unidentified\": \"\"\n            },\n            \"source\": \"PHB pg. 251\",\n            \"activation\": {\n                \"type\": \"bonus\",\n                \"cost\": 1,\n                \"condition\": \"\"\n            },\n            \"duration\": {\n                \"value\": null,\n                \"units\": \"\"\n            },\n            \"target\": {\n                \"value\": 1,\n                \"width\": null,\n                \"units\": \"any\",\n                \"type\": \"creature\"\n            },\n            \"range\": {\n                \"value\": null,\n                \"long\": null,\n                \"units\": \"\"\n            },\n            \"uses\": {\n                \"value\": null,\n                \"max\": \"\",\n                \"per\": \"\"\n            },\n            \"consume\": {\n                \"type\": \"\",\n                \"target\": \"\",\n                \"amount\": null\n            },\n            \"ability\": \"\",\n            \"actionType\": \"util\",\n            \"attackBonus\": 0,\n            \"chatFlavor\": \"\",\n            \"critical\": {\n                \"threshold\": null,\n                \"damage\": \"\"\n            },\n            \"damage\": {\n                \"parts\": [],\n                \"versatile\": \"\"\n            },\n            \"formula\": \"\",\n            \"save\": {\n                \"ability\": \"\",\n                \"dc\": null,\n                \"scaling\": \"spell\"\n            },\n            \"requirements\": \"Enchantment\",\n            \"recharge\": {\n                \"value\": null,\n                \"charged\": false\n            },\n            \"attunement\": null\n        },\n        \"effects\": [],\n        \"flags\": {\n            \"midi-qol\": {\n                \"effectActivation\": false,\n                \"onUseMacroName\": \"[postActiveEffects]ItemMacro\"\n            },\n            \"itemacro\": {\n                \"macro\": {\n                    \"data\": {\n                        \"_id\": null,\n                        \"name\": \"Move Hex\",\n                        \"type\": \"script\",\n                        \"author\": \"sGDyf0LH8KxxtfaW\",\n                        \"img\": \"icons/svg/dice-target.svg\",\n                        \"scope\": \"global\",\n\t\t\t\t\t\t\"command\": \"let target = args[0].targets[0]._id;\\nlet effectLabel = \\\"Hex\\\";\\nlet hexed = actor.effects.find(e => e.label === effectLabel);\\nif (!hexed) return ui.notifications.warn(`You don't have an active Hex to curse a new target.`);\\nlet remainingsecs = hexed.duration.seconds + hexed.duration.startTime - game.time.worldTime;\\nlet oldhexedtoken = canvas.tokens.get(getProperty(args[0].actor.flags, \\\"midi-qol.hex\\\"));\\nif (oldhexedtoken.document._actor.system.attributes.hp.value > 0) return ui.notifications.warn(`You can only curse a new creature after the current one drops to 0 HP.`);\\neffectLabel = \\\"Hex cursed\\\";\\nif (args[0].targets[0].actor.effects.find(e => e.label === effectLabel)) return ui.notifications.warn(`Target is already Hex cursed!`);\\nlet transfereffect = oldhexedtoken.document._actor.effects.find(e => e.label === effectLabel);\\nawait MidiQOL.socket().executeAsGM(\\\"createEffects\\\", {\\n    actorUuid: args[0].targets[0].actor.uuid,\\n    effects: [transfereffect]\\n});\\n\\nawait MidiQOL.socket().executeAsGM(\\\"removeEffects\\\", {\\n    actorUuid: oldhexedtoken.actor.uuid,\\n    effects: [transfereffect._id]\\n});\\n\\nlet changes = hexed.changes;\\nchanges[0] = {\\n    key: \\\"flags.midi-qol.hex\\\",\\n    mode: 5,\\n    value: target,\\n    priority: 20\\n}\\nawait hexed.update({\\n    changes\\n});\\n\\nlet curs = args[0].targets[0].actor.effects.find(e => e.label === effectLabel);\\nlet oldhextokenuuid = oldhexedtoken.document._actor.uuid\\nlet newhextokenuuid = args[0].targets[0].actor.uuid;\\nconst concentrationData = actor.getFlag(\\\"midi-qol\\\", \\\"concentration-data\\\");\\n\\nfor (let i = 0; i < concentrationData.targets.length; i++) {\\n    if (concentrationData.targets[i].tokenUuid === oldhextokenuuid) {\\n        concentrationData.targets[i].tokenUuid = newhextokenuuid;\\n        actor.setFlag(\\\"midi-qol\\\", \\\"concentration-data\\\", concentrationData);\\n    }\\n}\\n\\nawait MidiQOL.socket().executeAsGM(\\\"updateEffects\\\", {\\n    actorUuid: args[0].targets[0].actor.uuid,\\n    updates: [{\\n        _id: curs.id,\\n        duration: {\\n            startTime: game.time.worldTime,\\n            seconds: remainingsecs\\n        }\\n    }]\\n});\",\n                        \"folder\": null,\n                        \"sort\": 0,\n                        \"permission\": {\n                            \"default\": 0\n                        },\n                        \"flags\": {}\n                    }\n                }\n            },\n        }\n    }]\n\n    await actor.createEmbeddedDocuments(\"Item\", itemdata);\n\t\n    await actor.createEmbeddedDocuments(\"ActiveEffect\", [effectData]);\n\n    let effectLabel = \"Concentrating\";\n    let effect = actor.effects.find(e => e.label === effectLabel);\n\n    await actor.updateEmbeddedDocuments(\"ActiveEffect\", [{\n        _id: effect.id,\n        duration: {\n            seconds: durationSeconds\n        }\n    }]);\n}\nif (args[0].tag === \"DamageBonus\") {\n    if (![\"mwak\", \"rwak\", \"msak\", \"rsak\"].includes(args[0].item.system.actionType)) return {};\n    if (args[0].hitTargets.length === 0) return;\n    let targetId = args[0].targets[0]._id;\n    if (targetId !== getProperty(args[0].actor.flags, \"midi-qol.hex\")) return {};\n    const diceMult = args[0].isCritical ? 2 : 1;\n    let target = await fromUuid(args[0].hitTargetUuids[0] ?? \"\");\n    let numDice = 1;\n    if (args[0].isCritical) numDice = numDice * 2;\n    return {\n        damageRoll: `${numDice}d6[necrotic]`,\n        flavor: \"Hex - Damage Roll (necrotic)\"\n    }\n}",
+        "author": "sGDyf0LH8KxxtfaW",
+        "_id": null,
+        "img": "icons/svg/dice-target.svg",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "systemId": null,
+          "systemVersion": null,
+          "coreVersion": null,
+          "createdTime": null,
+          "modifiedTime": null,
+          "lastModifiedBy": null
+        }
+      }
+    },
+    "core": {
+      "sourceId": "Item.RJkWntTUqaezJ5Ma"
+    },
+    "midiProperties": {
+      "nodam": false,
+      "halfdam": false,
+      "fulldam": false,
+      "rollOther": false,
+      "critOther": false,
+      "concentration": false,
+      "magicdam": false,
+      "magiceffect": false,
+      "toggleEffect": false,
+      "ignoreTotalCover": false
+    },
+    "exportSource": {
+      "world": "5etest",
+      "system": "dnd5e",
+      "coreVersion": "10.290",
+      "systemVersion": "2.0.3"
+    }
+  },
+  "system": {
     "description": {
       "value": "<div class=\"rd__b  rd__b--3\">\n<p>You place a curse on a creature that you can see within range. Until the spell ends, you deal an extra [[/r 1d6]] necrotic damage to the target whenever you hit it with an attack. Also, choose one ability when you cast the spell. The target has disadvantage on ability checks made with the chosen ability.</p>\n<div class=\"rd__spc-inline-post\"> </div>\n<p>If the target drops to 0 hit points before this spell ends, you can use a bonus action on a subsequent turn of yours to curse a new creature.</p>\n<p>A @spell[remove curse] cast on the target ends this spell early.</p>\n</div>\n<div class=\"rd__b  rd__b--3\">\n<div class=\"rd__b  rd__b--3\"><span class=\"rd__h rd__h--3\" data-title-index=\"1\"> <span class=\"entry-title-inner\">At Higher Levels.</span></span>\n<p>When you cast this spell using a spell slot of 3rd or 4th level, you can maintain your concentration on the spell for up to 8 hours. When you use a spell slot of 5th level or higher, you can maintain your concentration on the spell for up to 24 hours.</p>\n</div>\n</div>",
       "chat": "",
@@ -32,7 +120,8 @@
     "uses": {
       "value": 0,
       "max": "0",
-      "per": ""
+      "per": "",
+      "recovery": ""
     },
     "consume": {
       "type": "",
@@ -83,62 +172,12 @@
     },
     "attunement": 0
   },
-  "effects": [],
-  "flags": {
-    "srd5e": {
-      "page": "spells.html",
-      "source": "PHB",
-      "hash": "hex_phb",
-      "propDroppable": "spell"
-    },
-    "midi-qol": {
-      "effectActivation": false,
-      "onUseMacroName": "[postActiveEffects]ItemMacro"
-    },
-    "enhanced-terrain-layer": {
-      "multiple": null,
-      "elevation": null,
-      "depth": null,
-      "environment": ""
-    },
-    "itemacro": {
-      "macro": {
-        "data": {
-          "_id": null,
-          "name": "Hex",
-          "type": "script",
-          "author": "sGDyf0LH8KxxtfaW",
-          "img": "icons/svg/dice-target.svg",
-          "scope": "global",
-          "command": "// Requires the following modules: Dynamic Active Effects, Item Macros, Times-Up, About-Time, MidiQOL, Advanced Macros\n// Macro version 1.03 // 20220401\n\nlet movehexname = \"Transfer Hex\";\n\nif (args[0] === \"on\") {\n    return\n}\n\nif (args[0] === \"off\") {\n    let actorToken = await fromUuid(args[args.length - 1].actorUuid);\n    const yactor = actorToken?.actor ? actorToken?.actor : actorToken;\n    if (yactor.items.find(e => e.data.name === movehexname)) {\n        yactor.items.find(e => e.data.name === movehexname).delete()\n    };\n    return\n}\n\n\nasync function setupHex(hexAb) {\n\n    let HexedEffect = {\n        label: item.name + \" cursed\",\n        origin: item.uuid,\n        icon: item.data.img,\n        duration: {\n            \"seconds\": durationSeconds,\n            startTime: game.time.worldTime\n        },\n        changes: [{\n            key: `flags.midi-qol.disadvantage.ability.check.${hexAb}`,\n            mode: 2,\n            value: 1,\n            priority: 20\n        }]\n    }\n\n    await MidiQOL.socket().executeAsGM(\"createEffects\", {\n        actorUuid: args[0].targets[0].actor.uuid,\n        effects: [HexedEffect]\n    });\n}\n\n\nif (args[0].tag === \"OnUse\") {\n\n    let target = args[0].targets[0].data._id;\n\n    var durationSeconds = (args[0].spellLevel >= 5) ? 86400 : (args[0].spellLevel >= 3) ? 28800 : 3600;\n\n    new Dialog({\n        title: \"Choose an ability\",\n        buttons: [{\n                label: \"STR\",\n                icon: '<i class=\"fas fa-hammer\"></i><br>',\n                callback: () => setupHex(\"str\"),\n            },\n            {\n                label: \"DEX\",\n                icon: '<i class=\"fas fa-quidditch\"></i><br>',\n                callback: () => setupHex(\"dex\"),\n            },\n            {\n                label: \"CON\",\n                icon: '<i class=\"fas fa-heartbeat\"></i><br>',\n                callback: () => setupHex(\"con\"),\n            },\n            {\n                label: \"INT\",\n                icon: '<i class=\"fas fa-brain\"></i><br>',\n                callback: () => setupHex(\"int\"),\n            },\n            {\n                label: \"WIS\",\n                icon: '<i class=\"fas fa-user-graduate\"></i><br>',\n                callback: () => setupHex(\"wis\"),\n            },\n            {\n                label: \"CHA\",\n                icon: '<i class=\"fas fa-theater-masks\"></i><br>',\n                callback: () => setupHex(\"cha\"),\n            },\n        ],\n    }).render(true);\n\n\n    const effectData = {\n        changes: [{\n                key: \"flags.midi-qol.hex\",\n                mode: 5,\n                value: target,\n                priority: 20\n            },\n            {\n                key: \"flags.dnd5e.DamageBonusMacro\",\n                mode: 5,\n                value: `ItemMacro.${item.name}`,\n                priority: 20\n            },\n            {\n                key: \"macro.itemMacro\",\n                mode: 0,\n                value: `ItemMacro.${item.name}`,\n                priority: 20\n            },\n        ],\n        origin: item.uuid,\n        disabled: false,\n\n\n        \"duration\": {\n            \"seconds\": durationSeconds,\n            \"startTime\": game.time.worldTime\n        },\n        icon: item.data.img,\n        label: item.name\n    }\n\n    let itemdata = [{\n        \"name\": movehexname,\n        \"type\": \"feat\",\n        \"img\": \"modules/plutonium/media/icon/spell/phb-hex.webp\",\n        \"data\": {\n            \"description\": {\n                \"value\": \"<p>If the target drops to 0 hit points before this spell ends, you can use a bonus action on a subsequent turn of yours to curse a new creature.</p>\",\n                \"chat\": \"\",\n                \"unidentified\": \"\"\n            },\n            \"source\": \"PHB pg. 251\",\n            \"activation\": {\n                \"type\": \"bonus\",\n                \"cost\": 1,\n                \"condition\": \"\"\n            },\n            \"duration\": {\n                \"value\": null,\n                \"units\": \"\"\n            },\n            \"target\": {\n                \"value\": 1,\n                \"width\": null,\n                \"units\": \"any\",\n                \"type\": \"creature\"\n            },\n            \"range\": {\n                \"value\": null,\n                \"long\": null,\n                \"units\": \"\"\n            },\n            \"uses\": {\n                \"value\": null,\n                \"max\": \"\",\n                \"per\": \"\"\n            },\n            \"consume\": {\n                \"type\": \"\",\n                \"target\": \"\",\n                \"amount\": null\n            },\n            \"ability\": \"\",\n            \"actionType\": \"util\",\n            \"attackBonus\": 0,\n            \"chatFlavor\": \"\",\n            \"critical\": {\n                \"threshold\": null,\n                \"damage\": \"\"\n            },\n            \"damage\": {\n                \"parts\": [],\n                \"versatile\": \"\"\n            },\n            \"formula\": \"\",\n            \"save\": {\n                \"ability\": \"\",\n                \"dc\": null,\n                \"scaling\": \"spell\"\n            },\n            \"requirements\": \"Enchantment\",\n            \"recharge\": {\n                \"value\": null,\n                \"charged\": false\n            },\n            \"attunement\": null\n        },\n        \"effects\": [],\n        \"flags\": {\n            \"midi-qol\": {\n                \"effectActivation\": false,\n                \"onUseMacroName\": \"[postActiveEffects]ItemMacro\"\n            },\n            \"itemacro\": {\n                \"macro\": {\n                    \"data\": {\n                        \"_id\": null,\n                        \"name\": \"Move Hex\",\n                        \"type\": \"script\",\n                        \"author\": \"sGDyf0LH8KxxtfaW\",\n                        \"img\": \"icons/svg/dice-target.svg\",\n                        \"scope\": \"global\",\n                        \"command\": \"let target = args[0].targets[0].data._id;\\nlet effectLabel = \\\"Hex\\\";\\nlet hexed = actor.effects.find(e => e.data.label === effectLabel);\\nif (!hexed) return ui.notifications.warn(`You don't have an active Hex to curse a new target.`);\\nlet remainingsecs = hexed.data.duration.seconds + hexed.data.duration.startTime - game.time.worldTime;\\nlet oldhexedtoken = canvas.tokens.get(getProperty(args[0].actor.flags, \\\"midi-qol.hex\\\"));\\nif (oldhexedtoken.data.actorData.data.attributes.hp.value > 0) return ui.notifications.warn(`You can only curse a new creature after the current one drops to 0 HP.`);\\neffectLabel = \\\"Hex cursed\\\";\\nif (args[0].targets[0].actor.effects.find(e => e.data.label === effectLabel)) return ui.notifications.warn(`Target is already Hex cursed!`);\\nlet transfereffect = oldhexedtoken.data.actorData.effects.find(e => e.label === effectLabel);\\nawait MidiQOL.socket().executeAsGM(\\\"createEffects\\\", {\\n    actorUuid: args[0].targets[0].actor.uuid,\\n    effects: [transfereffect]\\n});\\nawait MidiQOL.socket().executeAsGM(\\\"removeEffects\\\", {\\n    actorUuid: oldhexedtoken.actor.uuid,\\n    effects: [transfereffect._id]\\n});\\n\\nlet changes = hexed.data.changes;\\nchanges[0] = {\\n    key: \\\"flags.midi-qol.hex\\\",\\n    mode: 5,\\n    value: target,\\n    priority: 20\\n}\\nawait hexed.update({\\n    changes\\n});\\n\\nlet curs = args[0].targets[0].actor.effects.find(e => e.data.label === effectLabel);\\nlet oldhextokenuuid = oldhexedtoken.actor.uuid;\\nlet newhextokenuuid = args[0].targets[0].actor.uuid;\\nconst concentrationData = actor.getFlag(\\\"midi-qol\\\", \\\"concentration-data\\\");\\n\\nfor (let i = 0; i < concentrationData.targets.length; i++) {\\n    if (concentrationData.targets[i].tokenUuid === oldhextokenuuid) {\\n        concentrationData.targets[i].tokenUuid = newhextokenuuid;\\n        actor.setFlag(\\\"midi-qol\\\", \\\"concentration-data\\\", concentrationData);\\n    }\\n}\\n\\nawait MidiQOL.socket().executeAsGM(\\\"updateEffects\\\", {\\n    actorUuid: args[0].targets[0].actor.uuid,\\n    updates: [{\\n        _id: curs.id,\\n        duration: {\\n            startTime: game.time.worldTime,\\n            seconds: remainingsecs\\n        }\\n    }]\\n});\",\n                        \"folder\": null,\n                        \"sort\": 0,\n                        \"permission\": {\n                            \"default\": 0\n                        },\n                        \"flags\": {}\n                    }\n                }\n            },\n        }\n    }]\n\n    await actor.createEmbeddedDocuments(\"Item\", itemdata);\n    await actor.createEmbeddedDocuments(\"ActiveEffect\", [effectData]);\n\n    let effectLabel = \"Concentrating\";\n    let effect = actor.effects.find(e => e.data.label === effectLabel);\n\n    await actor.updateEmbeddedDocuments(\"ActiveEffect\", [{\n        _id: effect.id,\n        duration: {\n            seconds: durationSeconds\n        }\n    }]);\n}\nif (args[0].tag === \"DamageBonus\") {\n    if (![\"mwak\", \"rwak\", \"msak\", \"rsak\"].includes(args[0].item.data.actionType)) return {};\n    if (args[0].hitTargets.length === 0) return;\n    let targetId = args[0].targets[0].data._id;\n    if (targetId !== getProperty(args[0].actor.flags, \"midi-qol.hex\")) return {};\n    const diceMult = args[0].isCritical ? 2 : 1;\n    let target = await fromUuid(args[0].hitTargetUuids[0] ?? \"\");\n    let numDice = 1;\n    if (args[0].isCritical) numDice = numDice * 2;\n    return {\n        damageRoll: `${numDice}d6[necrotic]`,\n        flavor: \"Hex - Damage Roll (necrotic)\"\n    }\n}",
-          "folder": null,
-          "sort": 0,
-          "permission": {
-            "default": 0
-          },
-          "flags": {}
-        }
-      }
-    },
-    "core": {
-      "sourceId": "Item.RJkWntTUqaezJ5Ma"
-    },
-    "midiProperties": {
-      "nodam": false,
-      "halfdam": false,
-      "fulldam": false,
-      "rollOther": false,
-      "critOther": false,
-      "concentration": false,
-      "magicdam": false,
-      "magiceffect": false,
-      "toggleEffect": false
-    },
-    "exportSource": {
-      "world": "5etest",
-      "system": "dnd5e",
-      "coreVersion": "9.255",
-      "systemVersion": "1.5.7"
-    }
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "2.0.3",
+    "coreVersion": "10.290",
+    "createdTime": 1668610485993,
+    "modifiedTime": 1668610491376,
+    "lastModifiedBy": "sGDyf0LH8KxxtfaW"
   }
 }

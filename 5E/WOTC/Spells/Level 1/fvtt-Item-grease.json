@@ -1,0 +1,165 @@
+{
+  "name": "Grease",
+  "type": "spell",
+  "img": "icons/creatures/mammals/livestock-pig-green.webp",
+  "system": {
+    "description": {
+      "value": "<div class=\"rd__b  rd__b--3\"><p>Slick grease covers the ground in a 10-foot square centered on a point within range and turns it into difficult terrain for the duration.</p><div class=\"rd__spc-inline-post\"><p></p></div><p>When the grease appears, each creature standing in its area must succeed on a Dexterity saving throw or fall @condition[prone]. A creature that enters the area or ends its turn there must also succeed on a Dexterity saving throw or fall @condition[prone].</p></div>",
+      "chat": "",
+      "unidentified": ""
+    },
+    "source": "PHB pg. 246",
+    "activation": {
+      "type": "action",
+      "cost": 1,
+      "condition": ""
+    },
+    "duration": {
+      "value": 1,
+      "units": "minute"
+    },
+    "target": {
+      "value": 10,
+      "width": null,
+      "units": "ft",
+      "type": "square"
+    },
+    "range": {
+      "value": 60,
+      "long": null,
+      "units": "ft"
+    },
+    "uses": {
+      "value": null,
+      "max": "",
+      "per": "",
+      "recovery": ""
+    },
+    "consume": {
+      "type": "",
+      "target": "",
+      "amount": null
+    },
+    "ability": "",
+    "actionType": "util",
+    "attackBonus": null,
+    "chatFlavor": "",
+    "critical": {
+      "threshold": null,
+      "damage": ""
+    },
+    "damage": {
+      "parts": [],
+      "versatile": ""
+    },
+    "formula": "",
+    "save": {
+      "ability": "dex",
+      "dc": null,
+      "scaling": "spell"
+    },
+    "level": 1,
+    "school": "con",
+    "components": {
+      "value": "",
+      "vocal": true,
+      "somatic": true,
+      "material": true,
+      "ritual": false,
+      "concentration": false
+    },
+    "materials": {
+      "value": "a bit of pork rind or butter",
+      "consumed": false,
+      "cost": 0,
+      "supply": 0
+    },
+    "preparation": {
+      "mode": "prepared",
+      "prepared": false
+    },
+    "scaling": {
+      "mode": "none",
+      "formula": ""
+    }
+  },
+  "effects": [],
+  "flags": {
+    "plutonium": {
+      "page": "spells.html",
+      "source": "PHB",
+      "hash": "grease_phb",
+      "propDroppable": "spell"
+    },
+    "templatemacro": {
+      "whenEntered": {
+        "asGM": true,
+        "command": "let API = game.modules.get(\"templatemacro\").api;\n//let targets = API.findContained(template);\nlet target = token.id;\nlet origin = template.flags.dnd5e.origin;\nlet item = await fromUuid(origin);\nlet SpellDC = item.parent.system.attributes.spelldc;\nlet fromTokenId = canvas.tokens.get(token.id).actor.uuid;\nconst SaveType = item.system.save.ability;\nconst SpellName = item.name;\nconst AutoRollTimeOut = 30;\nlet Counter = 0;\n\nconst wait = async (ms) => new Promise((resolve) => setTimeout(resolve, ms));\n\nasync function GetRollResult(TokenIDParam, TargetParam) {\n    do {\n        //Filter MonksTokenBar Messages\n        let filtermsg = game.messages.contents.filter(i => i.flags[\"monks-tokenbar\"] != undefined);\n        let filtermsgrev = filtermsg.reverse();\n        //Check the last x second\n        let msgr = filtermsgrev.find(i => i.timestamp > Date.now() - ((Counter * 1000) + 1000));\n        if (msgr != undefined) var saveRoll = msgr.flags[\"monks-tokenbar\"][TokenIDParam].total;\n        await wait(1000);\n        Counter++;\n    } while ((Counter < AutoRollTimeOut) && (saveRoll === undefined));\n\n    if (saveRoll === undefined) {\n        //Then ReRoll\n        saveRoll = await game.MonksTokenBar.requestRoll(TargetParam, {\n            request: `save:${SaveType}`,\n            dc: `${SpellDC}`,\n            flavor: `${SpellName} - Auto roll!`,\n            silent: true,\n            fastForward: true\n        });\n        return saveRoll.tokenresults[0].roll.total;\n    } else\n        return saveRoll;\n}\n\nfunction RollSave(TargetParam, SpellDCParam) {\n    game.MonksTokenBar.requestRoll(TargetParam, {\n        request: `save:${SaveType}`,\n        dc: `${SpellDCParam}`,\n        flavor: SpellName,\n        silent: true\n    });\n}\n\nawait RollSave(target, SpellDC);\nlet rollResult = await GetRollResult('token' + token.id, token.id);\nif (rollResult < SpellDC) {\n\n    const hasEffectApplied = await game.dfreds.effectInterface.hasEffectApplied('Prone', fromTokenId);\n\n  if (!hasEffectApplied) {\n        game.dfreds.effectInterface.addEffect({\n            effectName: 'Prone',\n            uuid: fromTokenId\n        });\n    }\n}"
+      }
+    },
+    "enhanced-terrain-layer": {
+      "multiple": null,
+      "elevation": null,
+      "depth": null,
+      "environment": ""
+    },
+    "midi-qol": {
+      "effectActivation": false,
+      "onUseMacroName": "[postActiveEffects]ItemMacro"
+    },
+    "midiProperties": {
+      "nodam": false,
+      "fulldam": false,
+      "halfdam": false,
+      "rollOther": false,
+      "critOther": false,
+      "magicdam": false,
+      "magiceffect": false,
+      "concentration": false,
+      "toggleEffect": false,
+      "ignoreTotalCover": false
+    },
+    "core": {
+      "sourceId": "Item.BwMnPu9WawlhSzFc"
+    },
+    "itemacro": {
+      "macro": {
+        "name": "Grease",
+        "type": "script",
+        "scope": "global",
+        "command": "if (!game.modules.get(\"templatemacro\")?.active) {\n    ui.notifications.error(\"Please enable Template Macro module\");\n    return;\n}\n\n\nlet targets = await args[0].failedSaves;\nif (args[0].failedSaves.length > 0) {\n    for (let target of targets) {\n        let find_target = await canvas.tokens.get(target.id);\n        let fromActorId = find_target.actor.uuid;\n        const hasEffectApplied = await game.dfreds.effectInterface.hasEffectApplied('Prone', fromActorId);\n\n        if (!hasEffectApplied) {\n            await game.dfreds.effectInterface.addEffect({\n                effectName: 'Prone',\n                uuid: fromActorId\n            });\n        }  \n        }\n    }",
+        "author": "jLPsBxSrOdraqGtw",
+        "_id": null,
+        "img": "icons/svg/dice-target.svg",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "systemId": null,
+          "systemVersion": null,
+          "coreVersion": null,
+          "createdTime": null,
+          "modifiedTime": null,
+          "lastModifiedBy": null
+        }
+      }
+    },
+    "exportSource": {
+      "world": "123",
+      "system": "dnd5e",
+      "coreVersion": "10.290",
+      "systemVersion": "2.0.3"
+    }
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "2.0.3",
+    "coreVersion": "10.290",
+    "createdTime": 1669409585999,
+    "modifiedTime": 1669922398689,
+    "lastModifiedBy": "jLPsBxSrOdraqGtw"
+  }
+}

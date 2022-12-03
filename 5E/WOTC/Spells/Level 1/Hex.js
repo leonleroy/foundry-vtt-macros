@@ -1,5 +1,5 @@
-// Requires the following modules: Dynamic Active Effects, Item Macros, Times-Up, About-Time, MidiQOL, Advanced Macros
-// Macro version 1.03 // 20220401
+// Requires the following modules: Dynamic Active Effects, Item Macros, Times-Up, About-Time, MidiQOL
+// Macro version 1.04 // 20221114 For FoundryVTT V10
 
 let movehexname = "Transfer Hex";
 
@@ -10,8 +10,8 @@ if (args[0] === "on") {
 if (args[0] === "off") {
     let actorToken = await fromUuid(args[args.length - 1].actorUuid);
     const yactor = actorToken?.actor ? actorToken?.actor : actorToken;
-    if (yactor.items.find(e => e.data.name === movehexname)) {
-        yactor.items.find(e => e.data.name === movehexname).delete()
+    if (yactor.items.find(e => e.name === movehexname)) {
+        yactor.items.find(e => e.name === movehexname).delete()
     };
     return
 }
@@ -22,7 +22,7 @@ async function setupHex(hexAb) {
     let HexedEffect = {
         label: item.name + " cursed",
         origin: item.uuid,
-        icon: item.data.img,
+        icon: item.img,
         duration: {
             "seconds": durationSeconds,
             startTime: game.time.worldTime
@@ -44,7 +44,7 @@ async function setupHex(hexAb) {
 
 if (args[0].tag === "OnUse") {
 
-    let target = args[0].targets[0].data._id;
+    let target = args[0].targets[0]._id;
 
     var durationSeconds = (args[0].spellLevel >= 5) ? 86400 : (args[0].spellLevel >= 3) ? 28800 : 3600;
 
@@ -112,11 +112,11 @@ if (args[0].tag === "OnUse") {
             "seconds": durationSeconds,
             "startTime": game.time.worldTime
         },
-        icon: item.data.img,
+        icon: item.img,
         label: item.name
     }
-
-    let itemdata = [{
+	
+	    let itemdata = [{
         "name": movehexname,
         "type": "feat",
         "img": "modules/plutonium/media/icon/spell/phb-hex.webp",
@@ -197,7 +197,7 @@ if (args[0].tag === "OnUse") {
                         "author": "sGDyf0LH8KxxtfaW",
                         "img": "icons/svg/dice-target.svg",
                         "scope": "global",
-                        "command": "let target = args[0].targets[0].data._id;\nlet effectLabel = \"Hex\";\nlet hexed = actor.effects.find(e => e.data.label === effectLabel);\nif (!hexed) return ui.notifications.warn(`You don't have an active Hex to curse a new target.`);\nlet remainingsecs = hexed.data.duration.seconds + hexed.data.duration.startTime - game.time.worldTime;\nlet oldhexedtoken = canvas.tokens.get(getProperty(args[0].actor.flags, \"midi-qol.hex\"));\nif (oldhexedtoken.data.actorData.data.attributes.hp.value > 0) return ui.notifications.warn(`You can only curse a new creature after the current one drops to 0 HP.`);\neffectLabel = \"Hex cursed\";\nif (args[0].targets[0].actor.effects.find(e => e.data.label === effectLabel)) return ui.notifications.warn(`Target is already Hex cursed!`);\nlet transfereffect = oldhexedtoken.data.actorData.effects.find(e => e.label === effectLabel);\nawait MidiQOL.socket().executeAsGM(\"createEffects\", {\n    actorUuid: args[0].targets[0].actor.uuid,\n    effects: [transfereffect]\n});\nawait MidiQOL.socket().executeAsGM(\"removeEffects\", {\n    actorUuid: oldhexedtoken.actor.uuid,\n    effects: [transfereffect._id]\n});\n\nlet changes = hexed.data.changes;\nchanges[0] = {\n    key: \"flags.midi-qol.hex\",\n    mode: 5,\n    value: target,\n    priority: 20\n}\nawait hexed.update({\n    changes\n});\n\nlet curs = args[0].targets[0].actor.effects.find(e => e.data.label === effectLabel);\nlet oldhextokenuuid = oldhexedtoken.actor.uuid;\nlet newhextokenuuid = args[0].targets[0].actor.uuid;\nconst concentrationData = actor.getFlag(\"midi-qol\", \"concentration-data\");\n\nfor (let i = 0; i < concentrationData.targets.length; i++) {\n    if (concentrationData.targets[i].tokenUuid === oldhextokenuuid) {\n        concentrationData.targets[i].tokenUuid = newhextokenuuid;\n        actor.setFlag(\"midi-qol\", \"concentration-data\", concentrationData);\n    }\n}\n\nawait MidiQOL.socket().executeAsGM(\"updateEffects\", {\n    actorUuid: args[0].targets[0].actor.uuid,\n    updates: [{\n        _id: curs.id,\n        duration: {\n            startTime: game.time.worldTime,\n            seconds: remainingsecs\n        }\n    }]\n});",
+						"command": "let target = args[0].targets[0]._id;\nlet effectLabel = \"Hex\";\nlet hexed = actor.effects.find(e => e.label === effectLabel);\nif (!hexed) return ui.notifications.warn(`You don't have an active Hex to curse a new target.`);\nlet remainingsecs = hexed.duration.seconds + hexed.duration.startTime - game.time.worldTime;\nlet oldhexedtoken = canvas.tokens.get(getProperty(args[0].actor.flags, \"midi-qol.hex\"));\nif (oldhexedtoken.document._actor.system.attributes.hp.value > 0) return ui.notifications.warn(`You can only curse a new creature after the current one drops to 0 HP.`);\neffectLabel = \"Hex cursed\";\nif (args[0].targets[0].actor.effects.find(e => e.label === effectLabel)) return ui.notifications.warn(`Target is already Hex cursed!`);\nlet transfereffect = oldhexedtoken.document._actor.effects.find(e => e.label === effectLabel);\nawait MidiQOL.socket().executeAsGM(\"createEffects\", {\n    actorUuid: args[0].targets[0].actor.uuid,\n    effects: [transfereffect]\n});\n\nawait MidiQOL.socket().executeAsGM(\"removeEffects\", {\n    actorUuid: oldhexedtoken.actor.uuid,\n    effects: [transfereffect._id]\n});\n\nlet changes = hexed.changes;\nchanges[0] = {\n    key: \"flags.midi-qol.hex\",\n    mode: 5,\n    value: target,\n    priority: 20\n}\nawait hexed.update({\n    changes\n});\n\nlet curs = args[0].targets[0].actor.effects.find(e => e.label === effectLabel);\nlet oldhextokenuuid = oldhexedtoken.document._actor.uuid\nlet newhextokenuuid = args[0].targets[0].actor.uuid;\nconst concentrationData = actor.getFlag(\"midi-qol\", \"concentration-data\");\n\nfor (let i = 0; i < concentrationData.targets.length; i++) {\n    if (concentrationData.targets[i].tokenUuid === oldhextokenuuid) {\n        concentrationData.targets[i].tokenUuid = newhextokenuuid;\n        actor.setFlag(\"midi-qol\", \"concentration-data\", concentrationData);\n    }\n}\n\nawait MidiQOL.socket().executeAsGM(\"updateEffects\", {\n    actorUuid: args[0].targets[0].actor.uuid,\n    updates: [{\n        _id: curs.id,\n        duration: {\n            startTime: game.time.worldTime,\n            seconds: remainingsecs\n        }\n    }]\n});",
                         "folder": null,
                         "sort": 0,
                         "permission": {
@@ -211,10 +211,11 @@ if (args[0].tag === "OnUse") {
     }]
 
     await actor.createEmbeddedDocuments("Item", itemdata);
+	
     await actor.createEmbeddedDocuments("ActiveEffect", [effectData]);
 
     let effectLabel = "Concentrating";
-    let effect = actor.effects.find(e => e.data.label === effectLabel);
+    let effect = actor.effects.find(e => e.label === effectLabel);
 
     await actor.updateEmbeddedDocuments("ActiveEffect", [{
         _id: effect.id,
@@ -224,9 +225,9 @@ if (args[0].tag === "OnUse") {
     }]);
 }
 if (args[0].tag === "DamageBonus") {
-    if (!["mwak", "rwak", "msak", "rsak"].includes(args[0].item.data.actionType)) return {};
+    if (!["mwak", "rwak", "msak", "rsak"].includes(args[0].item.system.actionType)) return {};
     if (args[0].hitTargets.length === 0) return;
-    let targetId = args[0].targets[0].data._id;
+    let targetId = args[0].targets[0]._id;
     if (targetId !== getProperty(args[0].actor.flags, "midi-qol.hex")) return {};
     const diceMult = args[0].isCritical ? 2 : 1;
     let target = await fromUuid(args[0].hitTargetUuids[0] ?? "");
