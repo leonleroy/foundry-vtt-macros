@@ -6,7 +6,7 @@ I am using the following FoundryVTT modules for my macros:
 - Midi QOL
 - Times-Up
 - About Time
-- Advanced Macro
+- Dynamic Active Effects
 
 and in some cases:
 
