@@ -1,0 +1,41 @@
+{
+  "name": "Silver acorn",
+  "type": "loot",
+  "img": "MyPics/SAcorn.webp",
+  "effects": [],
+  "flags": {
+    "exportSource": {
+      "world": "5etest",
+      "system": "dnd5e",
+      "coreVersion": "10.290",
+      "systemVersion": "2.0.3"
+    }
+  },
+  "system": {
+    "description": {
+      "value": "<p>Silver acorn.</p>\n<section class=\"secret\">\n<p>Holding Corelei’s spirit.</p>\n</section>",
+      "chat": "",
+      "unidentified": ""
+    },
+    "source": "Fey Sisters' Fate",
+    "quantity": 1,
+    "weight": 0,
+    "price": 0,
+    "attunement": 0,
+    "equipped": false,
+    "rarity": "veryRare",
+    "identified": true,
+    "critical": {
+      "threshold": null,
+      "damage": null
+    }
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "2.0.3",
+    "coreVersion": "10.290",
+    "createdTime": null,
+    "modifiedTime": 1669973854273,
+    "lastModifiedBy": "sGDyf0LH8KxxtfaW"
+  }
+}

@@ -2,7 +2,7 @@
   "name": "Water’s Embrace",
   "type": "feat",
   "img": "MyIcons/drowning.svg",
-  "data": {
+  "system": {
     "description": {
       "value": "<section class=\"secret\">\n<p>A naiad can use an action to command a charmed target to enter the water and voluntarily drown. Unless the target makes a DC 14 Wisdom saving throw, the target forgoes holding its breath, and begins to drown. The target can survive the number of rounds equal to its Constitution modifier (minimum 1). On the start of its next turn, it drops to 0 hit points and is dying.</p>\n</section>",
       "chat": "",
@@ -32,7 +32,8 @@
     "uses": {
       "value": null,
       "max": "",
-      "per": ""
+      "per": "",
+      "recovery": ""
     },
     "consume": {
       "type": "",
@@ -83,21 +84,62 @@
           "author": "sGDyf0LH8KxxtfaW",
           "img": "icons/svg/dice-target.svg",
           "scope": "global",
-          "command": "// Requires the following modules: Monk's TokenBar, Dynamic Active Effects, Item Macros, Times-Up, About-Time, MidiQOL\n// Icon: https://game-icons.net/1x1/lorc/drowning.html \nconst AutoRollTimeOut = 30;\nlet Counter = 0;\nconst SaveType = \"wis\";\nconst SpellName = \"Water’s Embrace\";\n\nconst wait = async (ms) => new Promise((resolve) => setTimeout(resolve, ms));\n\n\nif ((args[0] === \"on\") || (args[0] === \"off\")) return;\nif (args[0] === \"each\") {\n    var SpellDC = parseInt(args[args.length - 2]);\n    let EndTime = args[args.length - 1].efData.duration.startTime + (args[args.length - 1].efData.duration.rounds) * 6;\n    let tokenid = 'token' + game.combat?.current.tokenId;\n    let targets = [canvas.tokens.get(game.combat?.current.tokenId)];\n    let RoundsToGo = (EndTime - game.time.worldTime) / 6;\n\n    await RollSave(targets, SpellDC);\n    let rollResult = await GetRollResult(tokenid, targets);\n    if (rollResult < SpellDC) {\n        if ((RoundsToGo == 1)) {\n            await args[args.length - 1].actor.update({\n                \"data.attributes.hp.value\": 0\n            });\n        }\n    } else {\n        let effect = args[args.length - 1].actor.effects.find(e => e.data.label === SpellName);\n        await effect.delete();\n\n    }\n\n    return;\n}\n\n\n/// On Use\nconst targets = Array.from(game.user.targets);\nvar SpellDC = actor.data.data.attributes.spelldc;\nlet tokenid = 'token' + targets[0].id;\n\nif (!game.combat) return ui.notifications.warn(`Start a combat to use ${item.name}.`);\n\nlet effect = args[0].targets[0].actor.effects.find(e => e.data.label === \"Charmed\");\nif (!effect) {\n    ui.notifications.info(\"Target is not yet Charmed!\");\n} else {\n    await RollSave(targets, SpellDC);\n    let rollResult = await GetRollResult(tokenid, targets);\n    //    console.log('Result: ', rollResult);\n    if (rollResult <= SpellDC) AddEffect(SpellDC);\n}\n\n\n/// Function declarations\n\nfunction AddEffect(SpellDCParam) {\n    let NumberOfRounds = (args[0].targets[0].actor.data.data.abilities.con.mod <= 0) ? 1 : args[0].targets[0].actor.data.data.abilities.con.mod;\n    let Effect = {\n        label: item.name,\n        origin: item.uuid,\n        icon: item.data.img,\n        duration: {\n            \"rounds\": NumberOfRounds,\n            startTime: game.time.worldTime\n        },\n        changes: [{\n            key: \"macro.itemMacro\",\n            mode: 0,\n            value: `ItemMacro.${item.name} ` + SpellDCParam,\n            priority: 20\n        }],\n        \"flags\": {\n            \"dae\": {\n                \"macroRepeat\": \"startEveryTurn\",\n            }\n        },\n    };\n    args[0].targets[0].actor.createEmbeddedDocuments(\"ActiveEffect\", [Effect]);\n}\n\nasync function GetRollResult(TokenIDParam, TargetParam) {\n    do {\n        //Filter MonksTokenBar Messages\n        let filtermsg = game.messages.contents.filter(i => i.data.flags[\"monks-tokenbar\"] != undefined);\n        let filtermsgrev = filtermsg.reverse();\n        //Check the last x second\n        let msgr = filtermsgrev.find(i => i.data.timestamp > Date.now() - ((Counter * 1000) + 1000));\n        if (msgr != undefined) var saveRoll = msgr.data.flags[\"monks-tokenbar\"][TokenIDParam].total;\n        await wait(1000);\n        Counter++;\n    } while ((Counter < AutoRollTimeOut) && (saveRoll === undefined));\n\n    if (saveRoll === undefined) {\n        //Then ReRoll\n        saveRoll = await game.MonksTokenBar.requestRoll(TargetParam, {\n            request: `save:${SaveType}`,\n            dc: `${SpellDC}`,\n            flavor: `${SpellName} - Auto roll!`,\n            silent: true,\n            fastForward: true\n        });\n        return saveRoll.tokenresults[0].roll.total;\n    } else\n        return saveRoll;\n}\n\n\nfunction RollSave(TargetParam, SpellDCParam) {\n    game.MonksTokenBar.requestRoll(TargetParam, {\n        request: `save:${SaveType}`,\n        dc: `${SpellDCParam}`,\n        flavor: SpellName,\n        silent: true\n    });\n}",
+          "command": "// Requires the following modules: Monk's TokenBar, Dynamic Active Effects, Item Macros, Times-Up, About-Time, MidiQOL\n// Icon: https://game-icons.net/1x1/lorc/drowning.html \n// Macro version 1.01 // 20220323\n\nconst AutoRollTimeOut = 30;\nlet Counter = 0;\nconst SaveType = \"wis\";\nconst SpellName = \"Water’s Embrace\";\n\nconst wait = async (ms) => new Promise((resolve) => setTimeout(resolve, ms));\n\n\nif ((args[0] === \"on\") || (args[0] === \"off\")) return;\nif (args[0] === \"each\") {\n    var SpellDC = parseInt(args[args.length - 2]);\n    let EndTime = args[args.length - 1].efData.duration.startTime + (args[args.length - 1].efData.duration.rounds) * 6;\n    let tokenid = 'token' + game.combat?.current.tokenId;\n    let targets = [canvas.tokens.get(game.combat?.current.tokenId)];\n    let RoundsToGo = (EndTime - game.time.worldTime) / 6;\n\n    await RollSave(targets, SpellDC);\n    let rollResult = await GetRollResult(tokenid, targets);\n    if (rollResult < SpellDC) {\n        if ((RoundsToGo == 1)) {\n            await args[args.length - 1].actor.update({\n                \"data.attributes.hp.value\": 0\n            });\n        }\n    } else {\n        let effect = args[args.length - 1].actor.effects.find(e => e.data.label === SpellName);\n        await effect.delete();\n\n    }\n\n    return;\n}\n\n\n/// On Use\nconst targets = Array.from(game.user.targets);\nvar SpellDC = actor.data.data.attributes.spelldc;\nlet tokenid = 'token' + targets[0].id;\n\nif (!game.combat) return ui.notifications.warn(`Start a combat to use ${item.name}.`);\n\nlet effect = args[0].targets[0].actor.effects.find(e => e.data.label === \"Charmed\");\nif (!effect) {\n    ui.notifications.info(\"Target is not yet Charmed!\");\n} else {\n    await RollSave(targets, SpellDC);\n    let rollResult = await GetRollResult(tokenid, targets);\n    //    console.log('Result: ', rollResult);\n    if (rollResult <= SpellDC) AddEffect(SpellDC);\n}\n\n\n/// Function declarations\n\nfunction AddEffect(SpellDCParam) {\n    let NumberOfRounds = (args[0].targets[0].actor.data.data.abilities.con.mod <= 0) ? 1 : args[0].targets[0].actor.data.data.abilities.con.mod;\n    let Effect = {\n        label: item.name,\n        origin: item.uuid,\n        icon: item.data.img,\n        duration: {\n            \"rounds\": NumberOfRounds,\n            startTime: game.time.worldTime\n        },\n        changes: [{\n            key: \"macro.itemMacro\",\n            mode: 0,\n            value: `ItemMacro.${item.name} ` + SpellDCParam,\n            priority: 20\n        }],\n        \"flags\": {\n            \"dae\": {\n                \"macroRepeat\": \"startEveryTurn\",\n            }\n        },\n    };\n    MidiQOL.socket().executeAsGM(\"createEffects\", { actorUuid: args[0].targets[0].actor.uuid, effects: [Effect] });\n}\n\nasync function GetRollResult(TokenIDParam, TargetParam) {\n    do {\n        //Filter MonksTokenBar Messages\n        let filtermsg = game.messages.contents.filter(i => i.data.flags[\"monks-tokenbar\"] != undefined);\n        let filtermsgrev = filtermsg.reverse();\n        //Check the last x second\n        let msgr = filtermsgrev.find(i => i.data.timestamp > Date.now() - ((Counter * 1000) + 1000));\n        if (msgr != undefined) var saveRoll = msgr.data.flags[\"monks-tokenbar\"][TokenIDParam].total;\n        await wait(1000);\n        Counter++;\n    } while ((Counter < AutoRollTimeOut) && (saveRoll === undefined));\n\n    if (saveRoll === undefined) {\n        //Then ReRoll\n        saveRoll = await game.MonksTokenBar.requestRoll(TargetParam, {\n            request: `save:${SaveType}`,\n            dc: `${SpellDC}`,\n            flavor: `${SpellName} - Auto roll!`,\n            silent: true,\n            fastForward: true\n        });\n        return saveRoll.tokenresults[0].roll.total;\n    } else\n        return saveRoll;\n}\n\n\nfunction RollSave(TargetParam, SpellDCParam) {\n    game.MonksTokenBar.requestRoll(TargetParam, {\n        request: `save:${SaveType}`,\n        dc: `${SpellDCParam}`,\n        flavor: SpellName,\n        silent: true\n    });\n}",
           "folder": null,
           "sort": 0,
           "permission": {
             "default": 0
           },
           "flags": {}
+        },
+        "name": "Water’s Embrace",
+        "type": "script",
+        "scope": "global",
+        "command": "// Requires the following modules: Monk's TokenBar, Dynamic Active Effects, Item Macros, Times-Up, About-Time, MidiQOL\n// Icon: https://game-icons.net/1x1/lorc/drowning.html \n// Macro version 1.02 For Foundry V10 // 20221203\n\nif (!game.modules.get(\"monks-tokenbar\")?.active) {  return ui.notifications.error(\"Please enable Monk's Tokenbar module\")};\n\nconst AutoRollTimeOut = 30;\nlet Counter = 0;\nconst SaveType = \"wis\";\nconst SpellName = \"Water’s Embrace\";\n\nconst wait = async (ms) => new Promise((resolve) => setTimeout(resolve, ms));\n\nif ((args[0] === \"on\") || (args[0] === \"off\")) return;\nif (args[0] === \"each\") {\n    var SpellDC = parseInt(args[args.length - 2]);\n    let EndTime = args[args.length - 1].efData.duration.startTime + (args[args.length - 1].efData.duration.rounds) * 6;\n    let tokenid = 'token' + token.document._id;\n    let targets = [await canvas.tokens.get(token.document._id)];\n    let RoundsToGo = (EndTime - game.time.worldTime) / 6;\n\n    await RollSave(targets, SpellDC);\n    let rollResult = await GetRollResult(tokenid, targets);\n    if (rollResult < SpellDC) {\n        if ((RoundsToGo == 1)) {\n            await args[args.length - 1].actor.update({\n                \"system.attributes.hp.value\": 0\n            });\n        }\n    } else {\n        let effect = args[args.length - 1].actor.effects.find(e => e.label === SpellName);\n        await effect.delete();\n\n    }\n\n    return;\n}\n\n/// On Use\nconst targets = Array.from(game.user.targets);\nvar SpellDC = actor.system.attributes.spelldc;\nlet tokenid = 'token' + targets[0].id;\n\nif (!game.combat) return ui.notifications.warn(`Start a combat to use ${item.name}.`);\n\nlet effect = args[0].targets[0].actor.effects.find(e => e.label === \"Charmed\");\nif (!effect) {\n    ui.notifications.info(\"Target is not yet Charmed!\");\n} else {\n    await RollSave(targets, SpellDC);\n    let rollResult = await GetRollResult(tokenid, targets);\n    //    console.log('Result: ', rollResult);\n    if (rollResult <= SpellDC) AddEffect(SpellDC);\n}\n\n\n/// Function declarations\n\nfunction AddEffect(SpellDCParam) {\n    let NumberOfRounds = (args[0].targets[0].actor.system.abilities.con.mod <= 0) ? 1 : args[0].targets[0].actor.system.abilities.con.mod;\n    let Effect = {\n        label: item.name,\n        origin: item.uuid,\n        icon: item.img,\n        duration: {\n            \"rounds\": NumberOfRounds,\n            startTime: game.time.worldTime\n        },\n        changes: [{\n            key: \"macro.itemMacro\",\n            mode: 0,\n            value: `ItemMacro.${item.name} ` + SpellDCParam,\n            priority: 20\n        }],\n        \"flags\": {\n            \"dae\": {\n                \"macroRepeat\": \"startEveryTurn\",\n            }\n        },\n    };\n    MidiQOL.socket().executeAsGM(\"createEffects\", { actorUuid: args[0].targets[0].actor.uuid, effects: [Effect] });\n}\n\nasync function GetRollResult(TokenIDParam, TargetParam) {\n    do {\n        //Filter MonksTokenBar Messages\n        let filtermsg = game.messages.contents.filter(i => i.flags[\"monks-tokenbar\"] != undefined);\n        let filtermsgrev = filtermsg.reverse();\n        //Check the last x second\n        let msgr = filtermsgrev.find(i => i.timestamp > Date.now() - ((Counter * 1000) + 1000));\n        if (msgr != undefined) var saveRoll = msgr.flags[\"monks-tokenbar\"][TokenIDParam].total;\n        await wait(1000);\n        Counter++;\n    } while ((Counter < AutoRollTimeOut) && (saveRoll === undefined));\n\n    if (saveRoll === undefined) {\n        //Then ReRoll\n        saveRoll = await game.MonksTokenBar.requestRoll(TargetParam, {\n            request: `save:${SaveType}`,\n            dc: `${SpellDC}`,\n            flavor: `${SpellName} - Auto roll!`,\n            silent: true,\n            fastForward: true\n        });\n        return saveRoll.tokenresults[0].roll.total;\n    } else\n        return saveRoll;\n}\n\n\nfunction RollSave(TargetParam, SpellDCParam) {\n    game.MonksTokenBar.requestRoll(TargetParam, {\n        request: `save:${SaveType}`,\n        dc: `${SpellDCParam}`,\n        flavor: SpellName,\n        silent: true\n    });\n}",
+        "author": "jLPsBxSrOdraqGtw",
+        "_id": null,
+        "img": "icons/svg/dice-target.svg",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "systemId": null,
+          "systemVersion": null,
+          "coreVersion": null,
+          "createdTime": null,
+          "modifiedTime": null,
+          "lastModifiedBy": null
         }
       }
     },
+    "midiProperties": {
+      "nodam": false,
+      "fulldam": false,
+      "halfdam": false,
+      "rollOther": false,
+      "critOther": false,
+      "magicdam": false,
+      "magiceffect": false,
+      "concentration": false,
+      "toggleEffect": false,
+      "ignoreTotalCover": false
+    },
     "exportSource": {
-      "world": "5etest",
+      "world": "123",
       "system": "dnd5e",
-      "coreVersion": "9.249",
-      "systemVersion": "1.5.7"
+      "coreVersion": "10.291",
+      "systemVersion": "2.0.3"
     }
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "2.0.3",
+    "coreVersion": "10.291",
+    "createdTime": 1670012864633,
+    "modifiedTime": 1670088744399,
+    "lastModifiedBy": "jLPsBxSrOdraqGtw"
   }
 }

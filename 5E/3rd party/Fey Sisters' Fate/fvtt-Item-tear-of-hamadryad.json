@@ -2,75 +2,6 @@
   "name": "Tear Of Hamadryad",
   "type": "consumable",
   "img": "icons/consumables/potions/potion-tube-corked-glowing-red.webp",
-  "data": {
-    "description": {
-      "value": "<p>This teardrop-shaped piece of smooth amber is warm to the touch and grants its bearer a feeling of calmness and serenity.</p>\n<p><strong>Property:</strong> Once per day, while clutching the <em>tear of the hamadryad </em>, you gain a 1d4 bonus to any saving throw or ability check.</p>",
-      "chat": "",
-      "unidentified": ""
-    },
-    "source": "Fey Sisters' Fate",
-    "quantity": 1,
-    "weight": 0.1,
-    "price": "270",
-    "attunement": 0,
-    "equipped": false,
-    "rarity": "uncommon",
-    "identified": true,
-    "activation": {
-      "type": "bonus",
-      "cost": 1,
-      "condition": ""
-    },
-    "duration": {
-      "value": null,
-      "units": "inst"
-    },
-    "target": {
-      "value": null,
-      "width": null,
-      "units": "self",
-      "type": ""
-    },
-    "range": {
-      "value": null,
-      "long": null,
-      "units": "touch"
-    },
-    "uses": {
-      "value": 1,
-      "max": "1",
-      "per": "lr",
-      "autoDestroy": false,
-      "autoUse": true
-    },
-    "consume": {
-      "type": "",
-      "target": "",
-      "amount": null
-    },
-    "ability": "",
-    "actionType": "util",
-    "attackBonus": 0,
-    "chatFlavor": "",
-    "critical": {
-      "threshold": null,
-      "damage": null
-    },
-    "damage": {
-      "parts": [],
-      "versatile": ""
-    },
-    "formula": "",
-    "save": {
-      "ability": "",
-      "dc": null,
-      "scaling": "spell"
-    },
-    "consumableType": "trinket",
-    "attributes": {
-      "spelldc": 10
-    }
-  },
   "effects": [],
   "flags": {
     "dynamiceffects": {
@@ -108,6 +39,27 @@
             "default": 0
           },
           "flags": {}
+        },
+        "name": "Tear Of Hamadryad",
+        "type": "script",
+        "scope": "global",
+        "command": "async function promptbonus() {\n\n    return await new Promise((resolve) => {\n        let dialogEditor = new Dialog({\n            title: `Choose bonus to`,\n            content: '',\n            buttons: {\n                hit: {\n                    label: `Saving Throw!`,\n                    callback: () => {\n                        resolve(true);\n                    }\n                },\n                miss: {\n                    label: `Avability Check!`,\n                    callback: () => {\n                        resolve(false);\n                    },\n                },\n                //default: () => {resolve(false)}\n            }\n        });\n\n        dialogEditor.render(true);\n    });\n}\n\nlet z = await promptbonus();\n\nif (z) {\n    var text = \"Saving Throw\";\n    var effectKey = \"flags.midi-qol.optional.Name.save\";\n} else {\n    var text = \"Avability Check\";\n    var effectKey = \"flags.midi-qol.optional.Name.check\";\n}\n\nconst roll = await new Roll(`1d4`).evaluate({\n    async: false\n});\nroll.toMessage({\n    flavor: text + \"bonus\",\n});\n\nlet rollBonus = roll._total;\n\nlet Effect = {\n    label: item.name,\n    origin: item.uuid,\n    icon: item.img,\n    changes: [{\n            key: effectKey,\n            mode: 2,\n            value: rollBonus,\n            priority: 20\n        },\n\n    ],\n    \"duration\": {\n        \"rounds\": 1,\n        \"seconds\": 6,\n        \"startTime\": game.time.worldTime\n    },\n\n};\nawait actor.createEmbeddedDocuments(\"ActiveEffect\", [Effect]);",
+        "author": "sGDyf0LH8KxxtfaW",
+        "_id": null,
+        "img": "icons/svg/dice-target.svg",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "systemId": null,
+          "systemVersion": null,
+          "coreVersion": null,
+          "createdTime": null,
+          "modifiedTime": null,
+          "lastModifiedBy": null
         }
       }
     },
@@ -115,11 +67,101 @@
       "onUseMacroName": "[postActiveEffects]ItemMacro",
       "effectActivation": false
     },
+    "midiProperties": {
+      "nodam": false,
+      "fulldam": false,
+      "halfdam": false,
+      "rollOther": false,
+      "critOther": false,
+      "magicdam": false,
+      "magiceffect": false,
+      "concentration": false,
+      "toggleEffect": false,
+      "ignoreTotalCover": false
+    },
     "exportSource": {
       "world": "5etest",
       "system": "dnd5e",
-      "coreVersion": "9.249",
-      "systemVersion": "1.5.7"
+      "coreVersion": "10.290",
+      "systemVersion": "2.0.3"
     }
+  },
+  "system": {
+    "description": {
+      "value": "<p>This teardrop-shaped piece of smooth amber is warm to the touch and grants its bearer a feeling of calmness and serenity.</p>\n<p><strong>Property:</strong> Once per day, while clutching the <em>tear of the hamadryad </em>, you gain a 1d4 bonus to any saving throw or ability check.</p>",
+      "chat": "",
+      "unidentified": ""
+    },
+    "source": "Fey Sisters' Fate",
+    "quantity": 1,
+    "weight": 0.1,
+    "price": 270,
+    "attunement": 0,
+    "equipped": false,
+    "rarity": "uncommon",
+    "identified": true,
+    "activation": {
+      "type": "bonus",
+      "cost": 1,
+      "condition": ""
+    },
+    "duration": {
+      "value": null,
+      "units": "inst"
+    },
+    "target": {
+      "value": null,
+      "width": null,
+      "units": "self",
+      "type": ""
+    },
+    "range": {
+      "value": null,
+      "long": null,
+      "units": "touch"
+    },
+    "uses": {
+      "value": 1,
+      "max": "1",
+      "per": "day",
+      "recovery": "",
+      "autoDestroy": false,
+      "autoUse": true
+    },
+    "consume": {
+      "type": "",
+      "target": "",
+      "amount": null
+    },
+    "ability": "",
+    "actionType": "util",
+    "attackBonus": 0,
+    "chatFlavor": "",
+    "critical": {
+      "threshold": null,
+      "damage": null
+    },
+    "damage": {
+      "parts": [],
+      "versatile": ""
+    },
+    "formula": "",
+    "save": {
+      "ability": "",
+      "dc": null,
+      "scaling": "spell"
+    },
+    "consumableType": "trinket",
+    "attributes": {
+      "spelldc": 10
+    }
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "2.0.3",
+    "coreVersion": "10.290",
+    "createdTime": null,
+    "modifiedTime": 1669980269750,
+    "lastModifiedBy": "sGDyf0LH8KxxtfaW"
   }
 }

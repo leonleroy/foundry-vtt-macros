@@ -2,16 +2,16 @@
   "name": "Potion of Barkskin",
   "type": "consumable",
   "img": "icons/consumables/potions/bottle-round-corked-blue.webp",
-  "data": {
+  "system": {
     "description": {
-      "value": "<p>This turbid brown potion hardens the skin of the consumer. A person who samples the liquid feels a tingling on the skin and slight stiffness in the joints. Drinking it causes the skin to harden into a bark-like natural armor.&nbsp;</p>",
+      "value": "<p>This turbid brown potion hardens the skin of the consumer. A person who samples the liquid feels a tingling on the skin and slight stiffness in the joints. Drinking it causes the skin to harden into a bark-like natural armor.</p><p><span style=\"font-family:Signika, sans-serif\"><strong style=\"box-sizing:border-box;user-select:text;color:rgb(25, 24, 19);font-family:Signika, sans-serif;font-size:13px;font-style:normal;font-variant-ligatures:normal;font-variant-caps:normal;letter-spacing:normal;orphans:2;text-align:start;text-indent:0px;text-transform:none;white-space:normal;widows:2;word-spacing:0px;-webkit-text-stroke-width:0px;text-decoration-thickness:initial;text-decoration-style:initial;text-decoration-color:initial\">Property: </strong></span>As an action, you drink the potion and gain a +2 bonus to your AC for one minute.</p>",
       "chat": "",
       "unidentified": ""
     },
     "source": "Fey Sisters' Fate",
     "quantity": 1,
     "weight": 0.1,
-    "price": "1750",
+    "price": 1750,
     "attunement": 0,
     "equipped": false,
     "rarity": "common",
@@ -40,6 +40,7 @@
       "value": 1,
       "max": "1",
       "per": "charges",
+      "recovery": "",
       "autoDestroy": true,
       "autoUse": true
     },
@@ -116,14 +117,55 @@
             "default": 0
           },
           "flags": {}
+        },
+        "name": "Potion of Barkskin",
+        "type": "script",
+        "scope": "global",
+        "command": "let Effect = {\n    label: item.name,\n    origin: item.uuid,\n    icon: item.img,\n    changes: [{\n        key: `system.attributes.ac.bonus`,\n        mode: 4,\n        value: `2`,\n        priority: 20\n    }],\n    duration: {\n        \"seconds\": 60,\n        \"rounds\": 10,\n        startTime: game.time.worldTime\n    },\n}\n\nawait actor.createEmbeddedDocuments(\"ActiveEffect\", [Effect]);",
+        "author": "sGDyf0LH8KxxtfaW",
+        "_id": null,
+        "img": "icons/svg/dice-target.svg",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "systemId": null,
+          "systemVersion": null,
+          "coreVersion": null,
+          "createdTime": null,
+          "modifiedTime": null,
+          "lastModifiedBy": null
         }
       }
+    },
+    "midiProperties": {
+      "nodam": false,
+      "fulldam": false,
+      "halfdam": false,
+      "rollOther": false,
+      "critOther": false,
+      "magicdam": false,
+      "magiceffect": false,
+      "concentration": false,
+      "toggleEffect": false,
+      "ignoreTotalCover": false
     },
     "exportSource": {
       "world": "5etest",
       "system": "dnd5e",
-      "coreVersion": "9.249",
-      "systemVersion": "1.5.7"
+      "coreVersion": "10.290",
+      "systemVersion": "2.0.3"
     }
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "2.0.3",
+    "coreVersion": "10.290",
+    "createdTime": null,
+    "modifiedTime": 1669979646102,
+    "lastModifiedBy": "sGDyf0LH8KxxtfaW"
   }
 }

@@ -2,13 +2,63 @@
   "name": "Glib Of Tongue",
   "type": "feat",
   "img": "icons/commodities/currency/coin-engraved-sun-smile-copper.webp",
-  "data": {
+  "effects": [
+    {
+      "_id": "3W2QsWX5QXr3sFlc",
+      "changes": [
+        {
+          "key": "flags.midi-qol.advantage.skill.per",
+          "mode": 0,
+          "value": "1",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "icon": "icons/commodities/currency/coin-engraved-sun-smile-copper.webp",
+      "label": "Charisma (Persuasion) checks are at advantage",
+      "origin": "Item.ENuzKlGcbahwb7d0",
+      "transfer": true,
+      "flags": {
+        "core": {
+          "statusId": ""
+        },
+        "dae": {
+          "stackable": "none",
+          "macroRepeat": "none",
+          "specialDuration": [],
+          "transfer": true
+        },
+        "dnd5e-helpers": {
+          "rest-effect": "Ignore"
+        }
+      },
+      "tint": null
+    }
+  ],
+  "flags": {
+    "exportSource": {
+      "world": "5etest",
+      "system": "dnd5e",
+      "coreVersion": "10.290",
+      "systemVersion": "2.0.3"
+    }
+  },
+  "system": {
     "description": {
-      "value": "<p>All of Melina’ Charisma (Persuasion) checks are at advantage. </p>",
+      "value": "<p>You are gifted with a silver tongue. All of your  Charisma  (Persuasion) checks are made at advantage.</p>",
       "chat": "",
       "unidentified": ""
     },
-    "source": "Fey Sister's Fate",
+    "source": "Fey Sisters' Fate",
     "activation": {
       "type": "",
       "cost": 0,
@@ -32,7 +82,8 @@
     "uses": {
       "value": null,
       "max": "",
-      "per": null
+      "per": null,
+      "recovery": ""
     },
     "consume": {
       "type": "",
@@ -63,52 +114,12 @@
       "charged": false
     }
   },
-  "effects": [
-    {
-      "_id": "3W2QsWX5QXr3sFlc",
-      "changes": [
-        {
-          "key": "flags.midi-qol.advantage.skill.per",
-          "mode": 0,
-          "value": "1",
-          "priority": "20"
-        }
-      ],
-      "disabled": false,
-      "duration": {
-        "startTime": null
-      },
-      "icon": "icons/commodities/currency/coin-engraved-sun-smile-copper.webp",
-      "label": "Charisma (Persuasion) checks are at advantage",
-      "origin": "Item.ENuzKlGcbahwb7d0",
-      "transfer": true,
-      "flags": {
-        "core": {
-          "statusId": ""
-        },
-        "dae": {
-          "stackable": "none",
-          "macroRepeat": "none",
-          "specialDuration": [],
-          "transfer": true
-        },
-        "dnd5e-helpers": {
-          "rest-effect": "Ignore"
-        }
-      },
-      "tint": "",
-      "selectedKey": "flags.midi-qol.advantage.skill.per"
-    }
-  ],
-  "flags": {
-    "core": {
-      "sourceId": "Item.ENuzKlGcbahwb7d0"
-    },
-    "exportSource": {
-      "world": "5etest",
-      "system": "dnd5e",
-      "coreVersion": "9.242",
-      "systemVersion": "1.5.7"
-    }
+  "_stats": {
+    "systemId": null,
+    "systemVersion": null,
+    "coreVersion": null,
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
   }
 }

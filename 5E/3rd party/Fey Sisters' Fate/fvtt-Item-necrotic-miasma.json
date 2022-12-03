@@ -1,10 +1,56 @@
 {
   "name": "Necrotic Miasma",
   "type": "spell",
-  "img": "steam.png",
-  "data": {
+  "img": "MyIcons/steam.svg",
+  "effects": [],
+  "flags": {
+    "spellTemplateManager": {
+      "stmData": {
+        "ignoreDuration": false,
+        "spellTexture": "",
+        "useTexture": false,
+        "alpha": 50,
+        "coneOrigin": 1,
+        "loopAnimations": true
+      }
+    },
+    "enhanced-terrain-layer": {
+      "multiple": 1,
+      "min": null,
+      "max": null,
+      "environment": "",
+      "elevation": null,
+      "depth": null
+    },
+    "midi-qol": {
+      "criticalThreshold": "20",
+      "effectActivation": false
+    },
+    "exportSource": {
+      "world": "5etest",
+      "system": "dnd5e",
+      "coreVersion": "10.290",
+      "systemVersion": "2.0.3"
+    },
+    "midiProperties": {
+      "nodam": false,
+      "fulldam": false,
+      "halfdam": false,
+      "rollOther": false,
+      "critOther": false,
+      "magicdam": false,
+      "magiceffect": false,
+      "concentration": false,
+      "toggleEffect": false,
+      "ignoreTotalCover": false
+    },
+    "core": {
+      "sourceId": "Item.yw5sKiVOmIGL8iOE"
+    }
+  },
+  "system": {
     "description": {
-      "value": "<p>A sickly dark essence descends on a creature within range that you can see. The target must succeed a Dex\u0002terity saving throw or take <span style=\"font-family:var(--font-primary);font-size:var(--font-size-14)\">[[/r 1d8]]</span><span style=\"font-family:var(--font-primary);font-size:var(--font-size-14)\"> necrotic damage. </span><span style=\"font-family:var(--font-primary);font-size:var(--font-size-14)\">The target gains no benefit from cover on this saving throw. </span></p>\n<p><span style=\"font-family:var(--font-primary);font-size:var(--font-size-14)\">The spell’s damage increases by 1d8 when you reach 5th level </span><span style=\"font-family:var(--font-primary);font-size:var(--font-size-14)\">[[/r 2d8]]</span><span style=\"font-family:var(--font-primary);font-size:var(--font-size-14)\">, 11th level </span><span style=\"font-family:var(--font-primary);font-size:var(--font-size-14)\">[[/r 3d8]]</span><span style=\"font-family:var(--font-primary);font-size:var(--font-size-14)\">, and 17th level </span><span style=\"font-family:var(--font-primary);font-size:var(--font-size-14)\">[[/r 4d8]]</span><span style=\"font-family:var(--font-primary);font-size:var(--font-size-14)\">. </span></p>",
+      "value": "<p>A sickly dark essence descends on a creature within range that you can see. The target must succeed a Dex\u0002terity saving throw or take [[/r 1d8]] necrotic damage. The target gains no benefit from cover on this saving throw.</p>\n<p>The spell’s damage increases by 1d8 when you reach 5th level [[/r 2d8]], 11th level [[/r 3d8]], and 17th level [[/r 4d8]]. </p>",
       "chat": "",
       "unidentified": ""
     },
@@ -22,7 +68,7 @@
       "value": 1,
       "width": null,
       "units": "any",
-      "type": ""
+      "type": "creature"
     },
     "range": {
       "value": 60,
@@ -32,7 +78,8 @@
     "uses": {
       "value": null,
       "max": "",
-      "per": ""
+      "per": "",
+      "recovery": ""
     },
     "consume": {
       "type": "",
@@ -85,35 +132,15 @@
     "scaling": {
       "mode": "cantrip",
       "formula": "(floor((@details.level+1)/6)+1)d8"
-    }
+    },
+    "attunement": null
   },
-  "effects": [],
-  "flags": {
-    "spellTemplateManager": {
-      "stmData": {
-        "ignoreDuration": false,
-        "spellTexture": "",
-        "useTexture": false,
-        "alpha": 50,
-        "coneOrigin": 1,
-        "loopAnimations": true
-      }
-    },
-    "enhanced-terrain-layer": {
-      "multiple": 1,
-      "min": null,
-      "max": null,
-      "environment": ""
-    },
-    "midi-qol": {
-      "criticalThreshold": "20",
-      "effectActivation": false
-    },
-    "exportSource": {
-      "world": "5etest",
-      "system": "dnd5e",
-      "coreVersion": "9.242",
-      "systemVersion": "1.5.7"
-    }
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "2.0.3",
+    "coreVersion": "10.290",
+    "createdTime": null,
+    "modifiedTime": 1668771593605,
+    "lastModifiedBy": "sGDyf0LH8KxxtfaW"
   }
 }
