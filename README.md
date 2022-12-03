@@ -1,4 +1,4 @@
-# foundry-vtt-macros
+# foundry-vtt-macros for Foundry V9
 
 I am using the following FoundryVTT modules for my macros:
 
