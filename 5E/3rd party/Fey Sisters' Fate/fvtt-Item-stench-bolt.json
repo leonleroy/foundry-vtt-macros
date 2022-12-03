@@ -1,0 +1,186 @@
+{
+  "name": "Stench Bolt",
+  "type": "spell",
+  "system": {
+    "description": {
+      "value": "<p>Make a ranged spell attack against the target creature. On a hit, the target emits a foul organic stench. The target and all creatures within 10 feet make all attack, ability checks and saving throws at disadvantage due to the nauseating effect of the stench. If the attack misses, the bolt targets a nearby unoccupied square. All creatures within 10 feet of that square make all attacks, ability checks and saving throws at disadvantage. However, creatures are able to move away from the offending stench on their next turn.</p><p>You can target one additional creature at <span style=\"font-family:var(--font-primary)\">5th level (2 total), 11th level (3 total), and 17th level (4 total). </span></p>",
+      "chat": "",
+      "unidentified": ""
+    },
+    "source": "Fey Sisters' Fate",
+    "activation": {
+      "type": "action",
+      "cost": 1,
+      "condition": ""
+    },
+    "duration": {
+      "value": null,
+      "units": "inst"
+    },
+    "target": {
+      "value": 1,
+      "width": null,
+      "units": "",
+      "type": "creature"
+    },
+    "range": {
+      "value": 30,
+      "long": null,
+      "units": "ft"
+    },
+    "uses": {
+      "value": null,
+      "max": "",
+      "per": "",
+      "recovery": ""
+    },
+    "consume": {
+      "type": "",
+      "target": "",
+      "amount": null
+    },
+    "ability": "",
+    "actionType": "rsak",
+    "attackBonus": "",
+    "chatFlavor": "",
+    "critical": {
+      "threshold": null,
+      "damage": ""
+    },
+    "damage": {
+      "parts": [],
+      "versatile": ""
+    },
+    "formula": "",
+    "save": {
+      "ability": "",
+      "dc": null,
+      "scaling": "spell"
+    },
+    "level": 0,
+    "school": "con",
+    "components": {
+      "value": "",
+      "vocal": true,
+      "somatic": true,
+      "material": true,
+      "ritual": false,
+      "concentration": false
+    },
+    "materials": {
+      "value": "A bit of smelly mud, or a stench  cabbage leaf",
+      "consumed": false,
+      "cost": 0,
+      "supply": 0
+    },
+    "preparation": {
+      "mode": "prepared",
+      "prepared": true
+    },
+    "scaling": {
+      "mode": "cantrip",
+      "formula": "(floor((@details.level+1)/6)+1)d8"
+    },
+    "attunement": 0
+  },
+  "flags": {
+    "spellTemplateManager": {
+      "stmData": {
+        "ignoreDuration": false,
+        "spellTexture": "",
+        "useTexture": false,
+        "alpha": 50,
+        "coneOrigin": 1,
+        "loopAnimations": true
+      }
+    },
+    "enhanced-terrain-layer": {
+      "multiple": 1,
+      "min": null,
+      "max": null,
+      "environment": "",
+      "elevation": null,
+      "depth": null
+    },
+    "midi-qol": {
+      "criticalThreshold": "20",
+      "effectActivation": false,
+      "onUseMacroName": "[postActiveEffects]ItemMacro",
+      "fumbleThreshold": null
+    },
+    "core": {
+      "sourceId": "Item.VPRfj3Q9ebH9S9yt"
+    },
+    "itemacro": {
+      "macro": {
+        "data": {
+          "_id": null,
+          "name": "Stench Bolt",
+          "type": "script",
+          "author": "sGDyf0LH8KxxtfaW",
+          "img": "icons/svg/dice-target.svg",
+          "scope": "global",
+          "command": "// Requires the following modules: Item Macros, Times-Up, About-Time, MidiQOL\n// Icon: https://game-icons.net/1x1/lorc/skull-bolt.html\n// Macro version 1.01 // 20220323\n\nif (args[0].hitTargets.length > 0) {\n    let targets = Array.from(game.user.targets)\n    let tokenid = targets[0]\n    let [range] = await canvas.scene.createEmbeddedDocuments(\"MeasuredTemplate\", [{\n        t: \"circle\",\n        user: game.userId,\n        x: tokenid._validPosition.x + canvas.grid.size / 2,\n        y: tokenid._validPosition.y + canvas.grid.size / 2,\n        direction: 0,\n        distance: 10,\n        borderColor: \"#436643\",\n        fillColor: \"#436643\"\n    }]);\n\tawait addeffect();\n}\nelse\n{\n      let templateData = {\n      t: \"circle\",\n      user: game.userId,\n      distance: 10,\n      direction: 0,\n      x: 0,\n      y: 0,\n      borderColor: \"#436643\",\n      fillColor: \"#436643\"\n     };\n\t \n\tHooks.once(\"createMeasuredTemplate\", addeffect);\n\n    let doc = new CONFIG.MeasuredTemplate.documentClass(templateData, { parent: canvas.scene });\n    let template = new game.dnd5e.canvas.AbilityTemplate(doc);\n    await template.drawPreview();\n}\n\t\nfunction addeffect()\n{\n    let newtargets = Array.from(game.user.targets)\n    for (let target of newtargets) {\n        let find_target =  canvas.tokens.get(target.id);\n        let Effect = {\n            label: item.name,\n            origin: item.uuid,\n            icon: item.data.img,\n            duration: {\n                \"seconds\": 600,\n                startTime: game.time.worldTime\n            },\n            changes: [{\n                    key: `flags.midi-qol.disadvantage.attack.all`,\n                    mode: 2,\n                    value: 1,\n                    priority: 20\n                },\n                {\n                    key: `flags.midi-qol.disadvantage.ability.save.all`,\n                    mode: 2,\n                    value: 1,\n                    priority: 20\n                },\n                {\n                    key: `flags.midi-qol.disadvantage.ability.check.all`,\n                    mode: 2,\n                    value: 1,\n                    priority: 20\n                }\n            ]\n        }\n        MidiQOL.socket().executeAsGM(\"createEffects\", { actorUuid: find_target.actor.uuid, effects: [Effect] });\n    }\n}",
+          "folder": null,
+          "sort": 0,
+          "permission": {
+            "default": 0
+          },
+          "flags": {}
+        },
+        "name": "Stench Bolt",
+        "type": "script",
+        "scope": "global",
+        "command": "// Requires the following modules: Item Macros, Times-Up, About-Time, MidiQOL\n// Icon: https://game-icons.net/1x1/lorc/skull-bolt.html\n// Macro version 1.02 for FoundryVTT V10 // 20221202\n\nlet rnd = randomID();\nlet targets = Array.from(game.user.targets);\nlet tokenDocument = targets[0];\n//let spellLevel = await args[0].spellLevel;\n//Cantrip!!\nlet spellLevel = actor.system.details.level;\nlet Maxtargets = spellLevel >= 11 ? (spellLevel >= 17 ? 4 : 3) : (spellLevel < 5 ? 1 : 2);\n\n\nlet Effect = {\n    label: item.name,\n    origin: item.uuid,\n    icon: item.img,\n    duration: {\n        \"seconds\": 6,\n        startTime: game.time.worldTime\n    },\n    changes: [{\n            key: `flags.midi-qol.disadvantage.attack.all`,\n            mode: 2,\n            value: 1,\n            priority: 20\n        },\n        {\n            key: `flags.midi-qol.disadvantage.ability.save.all`,\n            mode: 2,\n            value: 1,\n            priority: 20\n        },\n        {\n            key: `flags.midi-qol.disadvantage.ability.check.all`,\n            mode: 2,\n            value: 1,\n            priority: 20\n        }\n    ]\n}\n\nlet templateData = {\n    t: \"circle\",\n    user: game.userId,\n    direction: 0,\n    distance: 10,\n    borderColor: \"#136643\",\n    fillColor: \"#136643\",\n    flags: {\n        randomID: rnd\n    }\n}\n\nstenchbolt();\n\nasync function stenchbolt() {\n    if (args[0].hitTargets.length > 0) {\n        templateDataExt = {\n            ...templateData,\n            x: tokenDocument.x + canvas.grid.size / 2,\n            y: tokenDocument.y + canvas.grid.size / 2\n        };\n        let [range] = await canvas.scene.createEmbeddedDocuments(\"MeasuredTemplate\", [templateDataExt]);\n        let targets = findContained(range)\n        for (let target of targets) {\n            await addeffect(canvas.tokens.get(target).actor.uuid);\n        }\n        await templateeffect(range._id);\n    } else {\n        let tokenDocument = token.document;\n        templateDataExt = {\n            ...templateData,\n            x: token.x + canvas.grid.size / 2,\n            y: token.y + canvas.grid.size / 2\n        };\n        let doc = new CONFIG.MeasuredTemplate.documentClass(templateDataExt, {\n            parent: canvas.scene\n        });\n        let template = new game.dnd5e.canvas.AbilityTemplate(doc);\n        await template.drawPreview();\n        let temporarytemplate = canvas.scene.templates.find(e => e.flags.randomID == rnd);\n\n        let targets = Array.from(game.user.targets)\n        for (let target of targets) {\n            await addeffect(canvas.tokens.get(target.id).actor.uuid);\n        }\n        await templateeffect(temporarytemplate._id);\n    }\n}\n\nasync function addeffect(actoruuid) {\n    let find_target = canvas.tokens.get(actoruuid.id);\n    MidiQOL.socket().executeAsGM(\"createEffects\", {\n        actorUuid: actoruuid,\n        effects: [Effect]\n    });\n}\n\nasync function templateeffect(templateID) {\n    const templateUuid = `Scene.${canvas.scene.id}.MeasuredTemplate.${templateID}`;\n\n    let OEffect = {\n        label: item.name + ' Template',\n        origin: item.uuid,\n        icon: item.img,\n        duration: {\n            seconds: 6,\n            rounds: 1,\n            startTime: game.time.worldTime\n        },\n        changes: [{\n            key: `flags.dae.deleteUuid`,\n            mode: 5,\n            value: templateUuid,\n            priority: 20\n        }, ]\n    };\n\n    MidiQOL.socket().executeAsGM(\"createEffects\", {\n        actorUuid: actor.uuid,\n        effects: [OEffect]\n    });\n}\n\n\nfunction findContained(templateDoc) {\n    const {\n        size\n    } = templateDoc.parent.grid;\n    const {\n        x: tempx,\n        y: tempy,\n        object\n    } = templateDoc;\n    const tokenDocs = templateDoc.parent.tokens;\n    const contained = new Set();\n    for (const tokenDoc of tokenDocs) {\n        const {\n            width,\n            height,\n            x: tokx,\n            y: toky\n        } = tokenDoc;\n        const startX = width >= 1 ? 0.5 : width / 2;\n        const startY = height >= 1 ? 0.5 : height / 2;\n        for (let x = startX; x < width; x++) {\n            for (let y = startY; y < width; y++) {\n                const curr = {\n                    x: tokx + x * size - tempx,\n                    y: toky + y * size - tempy\n                };\n                const contains = object.shape.contains(curr.x, curr.y);\n                if (contains) {\n                    contained.add(tokenDoc.id);\n                    continue;\n                }\n            }\n        }\n    }\n    return [...contained];\n}",
+        "author": "jLPsBxSrOdraqGtw",
+        "_id": null,
+        "img": "icons/svg/dice-target.svg",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "systemId": null,
+          "systemVersion": null,
+          "coreVersion": null,
+          "createdTime": null,
+          "modifiedTime": null,
+          "lastModifiedBy": null
+        }
+      }
+    },
+    "favtab": {
+      "isFavorite": true
+    },
+    "midiProperties": {
+      "nodam": false,
+      "fulldam": false,
+      "halfdam": false,
+      "rollOther": false,
+      "critOther": false,
+      "magicdam": false,
+      "magiceffect": false,
+      "concentration": false,
+      "toggleEffect": false,
+      "ignoreTotalCover": false
+    },
+    "exportSource": {
+      "world": "123",
+      "system": "dnd5e",
+      "coreVersion": "10.290",
+      "systemVersion": "2.0.3"
+    }
+  },
+  "img": "MyIcons/skull-bolt_tb.svg",
+  "effects": [],
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "2.0.3",
+    "coreVersion": "10.290",
+    "createdTime": 1669835742064,
+    "modifiedTime": 1669992445071,
+    "lastModifiedBy": "jLPsBxSrOdraqGtw"
+  }
+}
