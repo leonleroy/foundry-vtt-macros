@@ -1,6 +1,6 @@
 // Special thanks to thatlonelybugbear for the original macro
 // Requires the following modules: Dynamic Active Effects, Item Macros, Times-Up, About-Time, MidiQOL
-// Macro version 1.01 For Foundry V10 // 20221203
+// Macro version 1.01 for Foundry V10 // 20221203
 
 
 function financial(x) {
@@ -43,15 +43,12 @@ var rollformula = roll._formula;
 const isCrit = args[0].isCritical;
 let chosen;
 let autoReRollWorld = 'reroll';
-let usePiercer = getProperty(actor,  "flags.dae.autoPiercer");
+let usePiercer = getProperty(actor, "flags.dae.autoPiercer");
 const same = financial(1 / dieFace);
 const less = financial((Rolled - 1) / dieFace);
 const more = financial((dieFace - Rolled) / dieFace);
 
-
-if (args[0].tag === "DamageBonus" && args[0].item.damage.parts[0][1] === "piercing") {
-
-
+if (args[0].tag === "DamageBonus" && args[0].item.system.damage.parts[0][1] === "piercing") {
     if (dieFace == Rolled && usePiercer) {
         chosen = 'No';
     } else if (Rolled == 1 && usePiercer) {

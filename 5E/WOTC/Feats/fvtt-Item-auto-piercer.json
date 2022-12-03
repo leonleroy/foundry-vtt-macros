@@ -2,7 +2,7 @@
   "name": "Auto Piercer",
   "type": "feat",
   "img": "MyIcons/piercing-sword.svg",
-  "data": {
+  "system": {
     "description": {
       "value": "<p>Adding this feature to an actor will cause Piercer to:</p>\n<ul>\n<li>auto reroll natural 1,</li>\n<li>not showing confirmation dialogue when max value was rolled. </li>\n</ul>",
       "chat": "",
@@ -32,7 +32,8 @@
     "uses": {
       "value": 0,
       "max": 0,
-      "per": ""
+      "per": "",
+      "recovery": ""
     },
     "consume": {
       "type": "",
@@ -72,12 +73,18 @@
           "key": "flags.dae",
           "mode": 0,
           "value": "autoPiercer 1",
-          "priority": "20"
+          "priority": 20
         }
       ],
       "disabled": false,
       "duration": {
-        "startTime": null
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
       },
       "icon": "MyIcons/piercing-sword.svg",
       "label": "Auto Piercer",
@@ -98,7 +105,7 @@
         }
       },
       "tint": null,
-      "selectedKey": "flags.dae"
+      "origin": null
     }
   ],
   "flags": {
@@ -130,10 +137,18 @@
       "sourceId": "Item.mxNsE3BefXZseoBW"
     },
     "exportSource": {
-      "world": "5etest",
+      "world": "123",
       "system": "dnd5e",
-      "coreVersion": "9.255",
-      "systemVersion": "1.5.7"
+      "coreVersion": "10.291",
+      "systemVersion": "2.0.3"
     }
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "2.0.3",
+    "coreVersion": "10.291",
+    "createdTime": null,
+    "modifiedTime": 1670091149673,
+    "lastModifiedBy": "jLPsBxSrOdraqGtw"
   }
 }
