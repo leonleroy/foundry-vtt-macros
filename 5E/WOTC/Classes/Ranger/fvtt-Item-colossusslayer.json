@@ -2,7 +2,121 @@
   "name": "ColossusSlayer",
   "type": "feat",
   "img": "MyIcons/hooded-assassin.svg",
-  "data": {
+  "effects": [
+    {
+      "_id": "f6thpude0q6kud5d",
+      "changes": [
+        {
+          "key": "flags.dnd5e.DamageBonusMacro",
+          "mode": 0,
+          "value": "ItemMacro.ColossusSlayer",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "icon": "MyIcons/hooded-assassin.svg",
+      "label": "ColossusSlayer",
+      "origin": "Actor.doZ9v1ew4w7djB7k.Item.4bNU9QQ3ID9EuwjO",
+      "transfer": true,
+      "flags": {
+        "core": {
+          "statusId": ""
+        },
+        "dae": {
+          "stackable": "none",
+          "durationExpression": "",
+          "macroRepeat": "none",
+          "specialDuration": [],
+          "transfer": true
+        },
+        "dnd5e-helpers": {
+          "rest-effect": "Ignore"
+        }
+      },
+      "tint": null
+    }
+  ],
+  "flags": {
+    "srd5e": {
+      "page": "classfeatures.html",
+      "source": "PHB",
+      "hash": "colossus%20slayer_ranger_phb_hunter_phb_3_phb"
+    },
+    "midi-qol": {
+      "effectActivation": false
+    },
+    "midiProperties": {
+      "nodam": false,
+      "fulldam": false,
+      "halfdam": false,
+      "rollOther": false,
+      "critOther": false,
+      "magicdam": false,
+      "magiceffect": false,
+      "concentration": false,
+      "toggleEffect": false,
+      "ignoreTotalCover": false
+    },
+    "itemacro": {
+      "macro": {
+        "data": {
+          "_id": null,
+          "name": "ColossusSlayer",
+          "type": "script",
+          "author": "sGDyf0LH8KxxtfaW",
+          "img": "icons/svg/dice-target.svg",
+          "scope": "global",
+          "command": "// Special thanks to thatlonelybugbear for the original macro\n// Requires the following modules: Dynamic Active Effects, Item Macros, Times-Up, About-Time\n// Macro version 1.00 // 20220323\n\n\nif (![\"mwak\",\"rwak\"].includes(args[0].item.data.actionType)) return {};         \nif (args[0].hitTargets.length < 1) return {};                                   \ntoken = canvas.tokens.get(args[0].tokenId);\nactor = token.actor;\nif (!actor || !token || args[0].hitTargets.length < 1) return {};\n\nlet target = canvas.tokens.get(args[0].hitTargets[0].id);\n//checking hp max versus hp current value on the target and if they are not different just stop, otherwise go on to return the extra damage\nlet hpmax = target.actor.data.data.attributes.hp.max;                                    \nlet hpval = target.actor.data.data.attributes.hp.value;\nif (hpmax === hpval) return {};\n\nconst diceMult = args[0].isCritical ? 2: 1;\n\nif (game.combat) {\n    let combatTime = game.combat.round;   \n    let lastTime = actor.getFlag('world', 'ColossusSlayerTime');\n    if (combatTime === lastTime)  return {};\n    if (combatTime !== lastTime) {\n        actor.setFlag('world','ColossusSlayerTime', combatTime);\n    }\n}\n\nreturn {damageRoll: `${diceMult}d8`, flavor: \"Colossus Slayer damage\"};",
+          "folder": null,
+          "sort": 0,
+          "permission": {
+            "default": 0
+          },
+          "flags": {}
+        },
+        "name": "ColossusSlayer",
+        "type": "script",
+        "scope": "global",
+        "command": "// Special thanks to thatlonelybugbear for the original macro\n// Requires the following modules: Dynamic Active Effects, Item Macros, Times-Up, About-Time\n// Macro version 1.01 // 20221118 For Foundry V10\n\nif (![\"mwak\",\"rwak\"].includes(args[0].item.system.actionType)) return {};\nif (args[0].hitTargets.length < 1) return {};\ntoken = canvas.tokens.get(args[0].tokenId);\nactor = token.actor;\nif (!actor || !token || args[0].hitTargets.length < 1) return {};\n\nlet target = canvas.tokens.get(args[0].hitTargets[0].id);\n//checking hp max versus hp current value on the target and if they are not different just stop, otherwise go on to return the extra damage\nlet hpmax = target.actor.system.attributes.hp.max;\nlet hpval = target.actor.system.attributes.hp.value;\n\nconsole.warn('FUUUUUUUUUUUUUUUUUUUUUT',hpmax , hpval);\n\nif (hpmax === hpval) return {};\n\nconst diceMult = args[0].isCritical ? 2: 1;\n\nif (game.combat) {\n    let combatTime = game.combat.round;   \n    let lastTime = actor.getFlag('world', 'ColossusSlayerTime');\n    if (combatTime === lastTime)  return {};\n    if (combatTime !== lastTime) {\n        actor.setFlag('world','ColossusSlayerTime', combatTime);\n    }\n}\n\nreturn {damageRoll: `${diceMult}d8`, flavor: \"Colossus Slayer damage\"};",
+        "author": "sGDyf0LH8KxxtfaW",
+        "_id": null,
+        "img": "icons/svg/dice-target.svg",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "systemId": null,
+          "systemVersion": null,
+          "coreVersion": null,
+          "createdTime": null,
+          "modifiedTime": null,
+          "lastModifiedBy": null
+        }
+      }
+    },
+    "core": {
+      "sourceId": "Item.qNBoDci1W9nwR2vi"
+    },
+    "exportSource": {
+      "world": "5etest",
+      "system": "dnd5e",
+      "coreVersion": "10.290",
+      "systemVersion": "2.0.3"
+    }
+  },
+  "system": {
     "description": {
       "value": "<div class=\"rd__b  rd__b--1\"><p>Your tenacity can wear down the most potent foes. When you hit a creature with a weapon attack, the creature takes an extra [[/r 1d8]] damage if it's below its hit point maximum. You can deal this extra damage only once per turn.</p></div>",
       "chat": "",
@@ -32,7 +146,8 @@
     "uses": {
       "value": 0,
       "max": "0",
-      "per": null
+      "per": null,
+      "recovery": ""
     },
     "consume": {
       "type": null,
@@ -63,91 +178,12 @@
       "charged": false
     }
   },
-  "effects": [
-    {
-      "_id": "f6thpude0q6kud5d",
-      "changes": [
-        {
-          "key": "flags.dnd5e.DamageBonusMacro",
-          "mode": 0,
-          "value": "ItemMacro.ColossusSlayer",
-          "priority": "20"
-        }
-      ],
-      "disabled": false,
-      "duration": {
-        "startTime": null
-      },
-      "icon": "MyIcons/hooded-assassin.svg",
-      "label": "ColossusSlayer",
-      "origin": "Actor.doZ9v1ew4w7djB7k.Item.4bNU9QQ3ID9EuwjO",
-      "transfer": true,
-      "flags": {
-        "core": {
-          "statusId": ""
-        },
-        "dae": {
-          "stackable": "none",
-          "durationExpression": "",
-          "macroRepeat": "none",
-          "specialDuration": [],
-          "transfer": true
-        },
-        "dnd5e-helpers": {
-          "rest-effect": "Ignore"
-        }
-      },
-      "tint": null,
-      "selectedKey": "flags.dnd5e.DamageBonusMacro"
-    }
-  ],
-  "flags": {
-    "srd5e": {
-      "page": "classfeatures.html",
-      "source": "PHB",
-      "hash": "colossus%20slayer_ranger_phb_hunter_phb_3_phb"
-    },
-    "midi-qol": {
-      "effectActivation": false
-    },
-    "midiProperties": {
-      "nodam": false,
-      "fulldam": false,
-      "halfdam": false,
-      "rollOther": false,
-      "critOther": false,
-      "magicdam": false,
-      "magiceffect": false,
-      "concentration": false,
-      "toggleEffect": false
-    },
-    "itemacro": {
-      "macro": {
-        "data": {
-          "_id": null,
-          "name": "ColossusSlayer",
-          "type": "script",
-          "author": "sGDyf0LH8KxxtfaW",
-          "img": "icons/svg/dice-target.svg",
-          "scope": "global",
-          "command": "// Special thanks to thatlonelybugbear for the original macro\n// Requires the following modules: Dynamic Active Effects, Item Macros, Times-Up, About-Time\n// Macro version 1.00 // 20220323\n\n\nif (![\"mwak\",\"rwak\"].includes(args[0].item.data.actionType)) return {};         \nif (args[0].hitTargets.length < 1) return {};                                   \ntoken = canvas.tokens.get(args[0].tokenId);\nactor = token.actor;\nif (!actor || !token || args[0].hitTargets.length < 1) return {};\n\nlet target = canvas.tokens.get(args[0].hitTargets[0].id);\n//checking hp max versus hp current value on the target and if they are not different just stop, otherwise go on to return the extra damage\nlet hpmax = target.actor.data.data.attributes.hp.max;                                    \nlet hpval = target.actor.data.data.attributes.hp.value;\nif (hpmax === hpval) return {};\n\nconst diceMult = args[0].isCritical ? 2: 1;\n\nif (game.combat) {\n    let combatTime = game.combat.round;   \n    let lastTime = actor.getFlag('world', 'ColossusSlayerTime');\n    if (combatTime === lastTime)  return {};\n    if (combatTime !== lastTime) {\n        actor.setFlag('world','ColossusSlayerTime', combatTime);\n    }\n}\n\nreturn {damageRoll: `${diceMult}d8`, flavor: \"Colossus Slayer damage\"};",
-          "folder": null,
-          "sort": 0,
-          "permission": {
-            "default": 0
-          },
-          "flags": {}
-        }
-      }
-    },
-    "core": {
-      "sourceId": "Item.qNBoDci1W9nwR2vi"
-    },
-    "exportSource": {
-      "world": "5etest",
-      "system": "dnd5e",
-      "coreVersion": "9.255",
-      "systemVersion": "1.5.7"
-    }
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "2.0.3",
+    "coreVersion": "10.290",
+    "createdTime": 1668807076964,
+    "modifiedTime": 1668808029830,
+    "lastModifiedBy": "sGDyf0LH8KxxtfaW"
   }
 }
