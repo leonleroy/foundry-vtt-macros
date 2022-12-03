@@ -3,7 +3,7 @@
 // Thanks to Crymic and IanM32 for the support/ideas
 // Requires the following permissions: CREATE NEW ACTORS, CREATE NEW ITEMS
 // Requires the following modules: Dynamic Active Effects, Item Macros, Times-Up, About-Time
-// Macro version 1.03 // 20220401
+// Macro version 1.04 // 20221128 for Foundry V10
 const subClassName = "Circle of the Moon"; // change if that is not your SubClass name for Circle of the Moon
 const CompendiumName = "Shapes Compendium";
 const RevertKeyWord = "Revert";
@@ -16,11 +16,11 @@ if ((args[0] === "off") || (item.name.includes(RevertKeyWord))) {
     return
 }
 
-if (!token.data.actorLink) return ui.notifications.warn("WildShape ItemMacro works with linked actors only!");
+if (!token.document.actorLink) return ui.notifications.warn("WildShape ItemMacro works with linked actors only!");
 
 let CompNameCheckOK = game.packs.contents.find(l => l.metadata.label === CompendiumName);
 if (CompNameCheckOK) {
-    var packName = CompNameCheckOK.metadata.package + '.' + CompNameCheckOK.metadata.name;
+    var packName = CompNameCheckOK.metadata.packageType + '.' + CompNameCheckOK.metadata.name;
 } else {
     return ui.notifications.info("There is no " + CompendiumName + " , please create and add at least one beast!");
 }
@@ -35,7 +35,7 @@ if (!druid) {
 }
 
 
-var levels = druid.data.data.levels;
+var levels = druid.system.levels;
 let rlevel = levels >= 1 ? 2 : levels;
 
 
@@ -51,7 +51,7 @@ let applyWildShapeEffect = {
     }],
     label: item.name,
     origin: item.uuid,
-    icon: item.data.img,
+    icon: item.img,
     duration: {
         "seconds": DurationInSeconds,
         startTime: game.time.worldTime
@@ -59,15 +59,15 @@ let applyWildShapeEffect = {
 }
 
 let maxCR = 0;
-if (druid.data.data.subclass !== subClassName) {
-    maxCR = (druid.data.data.levels > 7) ? 1 : (druid.data.data.levels > 3) ? 0.5 : (druid.data.data.levels > 1) ? 0.25 : 0;
+if (druid.system.subclass !== subClassName) {
+    maxCR = (druid.system.levels > 7) ? 1 : (druid.system.levels > 3) ? 0.5 : (druid.system.levels > 1) ? 0.25 : 0;
 } else {
-    maxCR = (druid.data.data.levels > 17) ? 6 : (druid.data.data.levels > 14) ? 5 : (druid.data.data.levels > 11) ? 4 : (druid.data.data.levels > 8) ? 3 : (druid.data.data.levels > 5) ? 2 : 1;
+    maxCR = (druid.system.levels > 17) ? 6 : (druid.system.levels > 14) ? 5 : (druid.system.levels > 11) ? 4 : (druid.system.levels > 8) ? 3 : (druid.system.levels > 5) ? 2 : 1;
 }
 
-const resourceKey = Object.keys(macroToken.actor.data.data.resources).filter(k => macroToken.actor.data.data.resources[k].label === item.name).shift();
+const resourceKey = Object.keys(macroToken.actor.system.resources).filter(k => macroToken.actor.system.resources[k].label === item.name).shift();
 
-if (druid.data.data.levels < 10 || druid.data.data.subclass !== subClassName || macroToken.actor.data.data.resources[resourceKey].value < 2) {
+if (druid.system.levels < 10 || druid.system.subclass !== subClassName || macroToken.actor.system.resources[resourceKey].value < 2) {
     await selectShape("beast");
 } else {
 
@@ -98,29 +98,29 @@ if (druid.data.data.levels < 10 || druid.data.data.subclass !== subClassName || 
 async function selectShape(type) {
     let beastDialogOptions = "";
     let elemDialogOptions = "";
-    let compendium = (await game.packs.get(packName).getDocuments()).sort((a, b) => b.data.data.details.cr - a.data.data.details.cr);
+    let compendium = (await game.packs.get(packName).getDocuments()).sort((a, b) => b.system.details.cr - a.system.details.cr);
     for (let shapeOption of compendium) {
         if (shapeOption.name.toLowerCase().includes("elemental")) {
-            elemDialogOptions += `<option value=${shapeOption.id}> ${shapeOption.name} |  ${shapeOption.data.data.attributes.hp.value} hit-points</option>`;
+            elemDialogOptions += `<option value=${shapeOption.id}> ${shapeOption.name} |  ${shapeOption.system.attributes.hp.value} hit-points</option>`;
         } else {
 
-            const fly = shapeOption.data.data.attributes.movement.fly;
-            const swim = shapeOption.data.data.attributes.movement.swim;
-            //			console.log(shapeOption.name,' Fly: ', fly, ' Swim: ',swim);
+            const fly = shapeOption.system.attributes.movement.fly;
+            const swim = shapeOption.system.attributes.movement.swim;
+
             const specialMovement = (fly !== 0 && fly !== null) ? "fly" : (swim !== 0 && swim !== null) ? "swim" : "none"
-            if ((druid.data.data.levels < 9 && specialMovement == "fly" && druid.data.data.subclass !== subClassName)) {
+            if ((druid.system.levels < 8 && specialMovement == "fly" && druid.system.subclass?.identifier !== subClassName)) {
                 continue;
-            } else if ((druid.data.data.levels < 5 && specialMovement == "swim" && druid.data.data.subclass !== subClassName)) {
+            } else if ((druid.system.levels < 4 && specialMovement == "swim" && druid.system.subclass?.identifier !== subClassName)) {
                 continue;
-            } else if ((druid.data.data.levels < 7 && specialMovement == "fly" && druid.data.data.subclass === subClassName)) {
+            } else if ((druid.system.levels < 8 && specialMovement == "fly" && druid.system.subclass?.identifier === subClassName)) {
                 continue;
-            } else if ((druid.data.data.levels < 4 && specialMovement == "swim" && druid.data.data.subclass === subClassName)) {
+            } else if ((druid.system.levels < 4 && specialMovement == "swim" && druid.system.subclass?.identifier === subClassName)) {
                 continue;
             } else {
-                if (shapeOption.data.data.details.cr > maxCR) {
+                if (shapeOption.system.details.cr > maxCR) {
                     continue;
                 }
-                beastDialogOptions += `<option value=${shapeOption.id}> ${shapeOption.name} | ${shapeOption.data.data.attributes.hp.value} hit-points | ${shapeOption.data.data.details.cr} CR</option>`;
+                beastDialogOptions += `<option value=${shapeOption.id}> ${shapeOption.name} | ${shapeOption.system.attributes.hp.value} hit-points | ${shapeOption.system.details.cr} CR</option>`;
             }
         }
     }
@@ -139,7 +139,7 @@ async function selectShape(type) {
                     const shapeId = html.find("[name=shape]")[0].value;
                     const newShape = compendium.find(shape => shape.id === shapeId)
 
-                    let CompNameFull = CompNameCheckOK.metadata.package + '.' + CompNameCheckOK.metadata.name
+                    let CompNameFull = CompNameCheckOK.metadata.packageType + '.' + CompNameCheckOK.metadata.name
 
                     await ChatMessage.create({
                         content: `<br>Turns into a @Compendium[${CompNameFull}.${newShape.id}].`,
@@ -151,12 +151,13 @@ async function selectShape(type) {
 
                     let addRevert = macroToken.actor.items.getName(item.name).toObject();
                     addRevert.name = RevertKeyWord + " " + item.name;
-                    addRevert.data.uses.max = 0;
-                    addRevert.data.uses.value = 0;
-                    addRevert.data.uses.per = "";
-                    addRevert.data.uses.type = "";
-                    addRevert.data.activation.type = "bonus";
-                    addRevert.data.description.value = "<p>You can stay in a beast shape for a number of hours equal to half your druid level (rounded down). You then revert to your normal form unless you expend another use of this feature. You can revert to your normal form earlier by using a bonus action on your turn. You automatically revert if you fall unconscious, drop to 0 hit points, or die.</p>"
+                    addRevert.system.uses.max = 0;
+                    addRevert.system.uses.value = 0;
+                    addRevert.system.uses.per = "";
+                    addRevert.system.uses.type = "";
+                    addRevert.system.activation.type = "bonus";
+                    addRevert.system.description.value = "<p>You can stay in a beast shape for a number of hours equal to half your druid level (rounded down). You then revert to your normal form unless you expend another use of this feature. You can revert to your normal form earlier by using a bonus action on your turn. You automatically revert if you fall unconscious, drop to 0 hit points, or die.</p>"
+
 
                     const [newToken] = await macroToken.actor.transformInto(newShape, {
                         keepMental: true,
@@ -165,10 +166,11 @@ async function selectShape(type) {
                         mergeSkills: true,
                     });
 
+
                     await newToken.setFlag("world", "WSoriginalActorId", macroActor.id);
 
-                    if (druid.data.data.levels > 5) {
-                        const updates = newToken.actor.itemTypes.weapon.filter(i => i.data.data.weaponType === "natural").map(i => ({
+                    if (druid.system.levels > 5) {
+                        const updates = newToken.actor.itemTypes.weapon.filter(i => i.system.weaponType === "natural").map(i => ({
                             _id: i.id,
                             "data.properties.mgc": true
                         }));
@@ -182,14 +184,13 @@ async function selectShape(type) {
                     await newToken.actor.createEmbeddedDocuments("ActiveEffect", [applyWildShapeEffect]);
                     await newToken.actor.createEmbeddedDocuments("Item", [addRevert]);
 
-		   let CWS = await actor.items.find(i => i.name === "Combat Wild Shape");
-                    
-                    if (CWS)
-                    {
+                    let CWS = await actor.items.find(i => i.name === "Combat Wild Shape");
+
+                    if (CWS) {
                         let itemdata = [{
                             "name": "Selfheal",
                             "type": "spell",
-                            "img": item.data.img,
+                            "img": item.img,
                             "data": {
                                 "description": {
                                     "value": "<p>While you are transformed by Wild Shape, you can use a bonus action to expend one spell slot to regain [[/r 1d8]] hit points per level of the spell slot expended.</p>",
@@ -258,14 +259,14 @@ async function selectShape(type) {
                         newToken.actor.createEmbeddedDocuments("Item", itemdata);
                     }
 
-                    if (getProperty(macroToken.actor.data, "flags.dae.autoWildShape") == "1") {
+                    if (getProperty(macroToken.actor, "flags.dae.autoWildShape") == "1") {
                         let newHP = 0;
                         let cnt = 0;
                         let rerollword = "";
 
                         while (newHP == 0) {
                             if (cnt != 0) rerollword = "Re";
-                            let HProll = await new Roll(newToken.actor.data.data.attributes.hp.formula);
+                            let HProll = await new Roll(newToken.actor.system.attributes.hp.formula);
                             await HProll.toMessage({
                                 flavor: `HP ${rerollword}Roll`,
                                 speaker: {
@@ -275,8 +276,8 @@ async function selectShape(type) {
                             newHP = HProll._total;
                             cnt++;
                             if (newHP >= 1) {
-                                newToken.actor.data.data.attributes.hp.value = newHP;
-                                newToken.actor.data.data.attributes.hp.max = newHP;
+                                newToken.actor.system.attributes.hp.value = newHP;
+                                newToken.actor.system.attributes.hp.max = newHP;
                             }
                         }
                     }
@@ -299,9 +300,9 @@ async function ActorRevertBack() {
             },
             type: CONST.CHAT_MESSAGE_TYPES.OOC
         });
-        token.actor.revertOriginalForm();
-        const elevation = token.data.elevation;
-        const spellSlots = await duplicate(token.actor.data.data.spells);
+
+        const elevation = token.document.elevation;
+        const spellSlots = await duplicate(token.actor.system.spells);
         const revertedActorId = token.document.getFlag("world", "WSoriginalActorId");
         await token.document.unsetFlag("world", "WSoriginalActorId");
         const revertedActor = game.actors.get(revertedActorId);
@@ -315,6 +316,6 @@ async function ActorRevertBack() {
             elevation: elevation
         })
 
-       return;
+        return;
     }
 }
